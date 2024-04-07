@@ -1,10 +1,9 @@
 "use strict"
 
+const HEADER = require("../constants/header.constant")
 const {
     ErrorResponse,
-    BadRequestError,
     NotFoundResponse,
-    EResponse,
     UnauthorizedResponse,
     NotModifiedResponse,
 } = require("../response/error.response")
@@ -16,6 +15,15 @@ const login = async (req, res, next) => {
 
     switch (code) {
         case 200:
+            res.cookie("access_token", results.accessToken, {
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                httpOnly: true,
+                secure: true,
+            }).cookie("refresh_token", results.refreshToken, {
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                httpOnly: true,
+                secure: true,
+            })
             return new SuccessResponse({
                 message: "Login successful",
                 metadata: results,
@@ -34,10 +42,23 @@ const login = async (req, res, next) => {
 }
 
 const logout = async (req, res, next) => {
-    return new SuccessResponse({
-        message: "Logout successful",
-        metadata: await AccessService.logout(),
-    }).send(res)
+    try {
+        const { userId } = req.payload
+        const { code, ...results } = await AccessService.logout({ userId })
+        switch (code) {
+            case 200:
+                res.clearCookie("access_token")
+                res.clearCookie("refresh_token")
+                return new SuccessResponse({
+                    message: "Logout successful",
+                    metadata: results,
+                }).send(res)
+            default:
+                return new ErrorResponse().send(res)
+        }
+    } catch (error) {
+        next(error)
+    }
 }
 
 const register = async (req, res, next) => {
@@ -59,7 +80,7 @@ const register = async (req, res, next) => {
 
 const refreshToken = async (req, res, next) => {
     try {
-        const refreshToken = req.headers["x-refresh-token"]
+        const refreshToken = req.headers[HEADER.REFRESHTOKEN]
         if (!refreshToken) {
             return new NotFoundResponse({
                 message: "Refresh token not found",

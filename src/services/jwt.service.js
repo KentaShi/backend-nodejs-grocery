@@ -1,7 +1,10 @@
 "use strict"
 const JWT = require("jsonwebtoken")
 const client = require("../db/redis.init")
-const { AuthFailureError } = require("../response/error.response")
+const {
+    AuthFailureError,
+    UnauthorizedResponse,
+} = require("../response/error.response")
 
 const signAccessToken = async (userId) => {
     return new Promise((resolve, reject) => {
@@ -43,7 +46,6 @@ const signRefreshToken = async (userId) => {
 }
 
 const verifyRefreshToken = async (refreshToken) => {
-    console.log(refreshToken)
     return new Promise((resolve, reject) => {
         JWT.verify(
             refreshToken,
@@ -53,7 +55,11 @@ const verifyRefreshToken = async (refreshToken) => {
                 client.get(payload.userId, (err, reply) => {
                     if (err) return reject(err)
                     if (refreshToken === reply) resolve(payload)
-                    return reject(new Error("Invalid refresh token"))
+                    return reject(
+                        new UnauthorizedResponse({
+                            message: "Invalid refresh token",
+                        })
+                    )
                 })
             }
         )

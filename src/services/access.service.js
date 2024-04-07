@@ -11,6 +11,7 @@ const {
     findUserByUsername,
     createUser,
 } = require("../models/repositories/user.repo")
+const client = require("../db/redis.init")
 
 class AccessService {
     static login = async ({ username, password }) => {
@@ -50,9 +51,18 @@ class AccessService {
         }
     }
 
-    static logout = async () => {
-        return {
-            code: 200,
+    static logout = async ({ userId }) => {
+        try {
+            console.log(userId)
+            client.del(userId.toString(), (err, reply) => {})
+            return {
+                code: 200,
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
         }
     }
 
