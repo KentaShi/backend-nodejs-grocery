@@ -11,10 +11,6 @@ var tokenSchema = new Schema(
             required: true,
             ref: "User",
         },
-        refreshToken: {
-            type: String,
-            required: true,
-        },
         refreshTokensUsed: {
             type: Array,
             default: [],

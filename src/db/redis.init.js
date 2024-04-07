@@ -4,9 +4,9 @@ const client = redis.createClient({
     host: "127.0.0.1",
 })
 
-client.ping((err, pong) => {
-    console.log(pong)
-})
+// client.ping((err, pong) => {
+//     console.log(pong)
+// })
 
 client.on("error", (err) => console.log(err))
 client.on("connect", (err) => console.log("Redis Connected"))
