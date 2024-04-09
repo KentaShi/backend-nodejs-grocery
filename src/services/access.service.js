@@ -40,8 +40,10 @@ class AccessService {
                     fields: ["username", "roles"],
                     object: foundUser,
                 }),
-                accessToken,
-                refreshToken,
+                tokens: {
+                    accessToken,
+                    refreshToken,
+                },
             }
         } catch (error) {
             return {
