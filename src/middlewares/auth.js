@@ -16,7 +16,7 @@ const verifyAccessToken = async (req, res, next) => {
         if (err) {
             if (err.message === "jwt expired") {
                 return new UnauthorizedResponse({
-                    message: `Unauthorized, ${err.message}`,
+                    message: err.message,
                 }).send(res)
             }
             return new UnauthorizedResponse({
