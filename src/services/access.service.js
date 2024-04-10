@@ -10,6 +10,7 @@ const {
 const {
     findUserByUsername,
     createUser,
+    findUserById,
 } = require("../models/repositories/user.repo")
 const client = require("../db/redis.init")
 
@@ -59,6 +60,35 @@ class AccessService {
             client.del(userId.toString(), (err, reply) => {})
             return {
                 code: 200,
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
+
+    static getAuth = async ({ refreshToken }) => {
+        try {
+            const { userId } = await verifyRefreshToken(refreshToken)
+            const accessToken = await signAccessToken(userId)
+            const foundUser = await findUserById({ userId })
+            if (!foundUser) {
+                return {
+                    code: 404,
+                    message: "User not found",
+                }
+            }
+            return {
+                code: 200,
+                user: getInfoData({
+                    fields: ["username", "roles"],
+                    object: foundUser,
+                }),
+                tokens: {
+                    accessToken,
+                },
             }
         } catch (error) {
             return {

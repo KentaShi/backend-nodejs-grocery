@@ -15,11 +15,11 @@ const login = async (req, res, next) => {
 
     switch (code) {
         case 200:
-            res.cookie("access_token", results.accessToken, {
+            res.cookie("accessToken", results.tokens.accessToken, {
                 expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
                 httpOnly: true,
                 secure: true,
-            }).cookie("refresh_token", results.refreshToken, {
+            }).cookie("refreshToken", results.tokens.refreshToken, {
                 expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
                 httpOnly: true,
                 secure: true,
@@ -78,6 +78,22 @@ const register = async (req, res, next) => {
     }
 }
 
+const getAuth = async (req, res, next) => {
+    try {
+        const refreshToken = req.headers[HEADER.REFRESHTOKEN]
+        if (!refreshToken) {
+            return new NotFoundResponse({
+                message: "Refresh token not found",
+            }).send(res)
+        }
+        const { code, ...results } = await AccessService.refreshToken({
+            refreshToken,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 const refreshToken = async (req, res, next) => {
     try {
         const refreshToken = req.headers[HEADER.REFRESHTOKEN]
@@ -103,4 +119,4 @@ const refreshToken = async (req, res, next) => {
     }
 }
 
-module.exports = { login, register, logout, refreshToken }
+module.exports = { login, register, logout, refreshToken, getAuth }
