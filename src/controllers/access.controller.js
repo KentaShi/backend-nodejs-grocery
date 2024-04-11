@@ -86,9 +86,22 @@ const getAuth = async (req, res, next) => {
                 message: "Refresh token not found",
             }).send(res)
         }
-        const { code, ...results } = await AccessService.refreshToken({
+        const { code, ...results } = await AccessService.getAuth({
             refreshToken,
         })
+        switch (code) {
+            case 200:
+                return new SuccessResponse({
+                    message: "Get user information successfully",
+                    metadata: results,
+                }).send(res)
+            case 404:
+                return new NotFoundResponse({
+                    message: results?.message,
+                }).send(res)
+            default:
+                return new ErrorResponse().send(res)
+        }
     } catch (error) {
         next(error)
     }
