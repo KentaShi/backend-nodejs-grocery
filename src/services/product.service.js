@@ -1,4 +1,6 @@
 "use strict"
 
-class ProductSerive {}
+class ProductSerive {
+    static createNewProduct = async (data) => {}
+}
 module.exports = ProductSerive
