@@ -11,7 +11,7 @@ const signAccessToken = async (userId) => {
         const payload = { userId }
         const secret = process.env.ACCESS_TOKEN_SECRET
         const options = {
-            expiresIn: "10m",
+            expiresIn: "1m",
         }
 
         JWT.sign(payload, secret, options, (err, res) => {
@@ -26,7 +26,7 @@ const signRefreshToken = async (userId) => {
         const payload = { userId }
         const secret = process.env.REFRESH_TOKEN_SECRET
         const options = {
-            expiresIn: "1y",
+            expiresIn: "1d",
         }
 
         JWT.sign(payload, secret, options, (err, token) => {

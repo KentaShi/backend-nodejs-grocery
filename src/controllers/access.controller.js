@@ -15,15 +15,15 @@ const login = async (req, res, next) => {
 
     switch (code) {
         case 200:
-            res.cookie("accessToken", results.tokens.accessToken, {
-                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                httpOnly: true,
-                secure: true,
-            }).cookie("refreshToken", results.tokens.refreshToken, {
-                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                httpOnly: true,
-                secure: true,
-            })
+            // res.cookie("accessToken", results.tokens.accessToken, {
+            //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            //     httpOnly: true,
+            //     secure: true,
+            // }).cookie("refreshToken", results.tokens.refreshToken, {
+            //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            //     httpOnly: true,
+            //     secure: true,
+            // })
             return new SuccessResponse({
                 message: "Login successful",
                 metadata: results,
@@ -80,7 +80,7 @@ const register = async (req, res, next) => {
 
 const getAuth = async (req, res, next) => {
     try {
-        const refreshToken = req.headers[HEADER.REFRESHTOKEN]
+        const { refreshToken } = req.body
         if (!refreshToken) {
             return new NotFoundResponse({
                 message: "Refresh token not found",
@@ -92,7 +92,7 @@ const getAuth = async (req, res, next) => {
         switch (code) {
             case 200:
                 return new SuccessResponse({
-                    message: "Get user information successfully",
+                    message: "Welcome back",
                     metadata: results,
                 }).send(res)
             case 404:
