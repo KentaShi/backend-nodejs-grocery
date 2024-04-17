@@ -6,7 +6,7 @@ const productController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
 
 //fetch all products
-router.get("/", asyncHandler(productController.fetchAllProducts))
+router.get("/all", asyncHandler(productController.fetchAllProducts))
 
 //fetch product by id
 router.get("/:id", asyncHandler(productController.fetchProductById))

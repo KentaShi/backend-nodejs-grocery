@@ -56,5 +56,25 @@ class ProductSerive {
             }
         }
     }
+    static findAll = async () => {
+        try {
+            const products = await productRepository.findAll()
+            if (products.length > 0) {
+                return {
+                    code: 200,
+                    products,
+                }
+            }
+            return {
+                code: 404,
+                message: "List of products is empty",
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
 }
 module.exports = ProductSerive
