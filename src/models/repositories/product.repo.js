@@ -1,7 +1,9 @@
 "use strict"
 const ProductModel = require("../product.model")
 
-const findAll = () => {}
+const findAll = async () => {
+    return await ProductModel.find().lean()
+}
 const findById = () => {}
 const findBySlug = async ({ slug }) => {
     return await ProductModel.findOne({ product_slug: slug }).lean()
