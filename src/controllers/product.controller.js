@@ -6,7 +6,7 @@ const {
     NotModifiedResponse,
 } = require("../response/error.response")
 const { SuccessResponse } = require("../response/success.response")
-const { default: ProductSerive } = require("../services/product.service")
+const ProductSerive = require("../services/product.service")
 
 const fetchAllProducts = async (req, res, next) => {
     const { code, ...results } = await ProductSerive.findAll()
@@ -40,7 +40,21 @@ const addNewProduct = async (req, res, next) => {
     }
 }
 const updateProductById = async (req, res, next) => {}
-const deleteProductById = async (req, res, next) => {}
+const deleteProductById = async (req, res, next) => {
+    const { id } = req.params
+    const { code, ...results } = await ProductSerive.delete({ product_id: id })
+    switch (code) {
+        case 200:
+            return new SuccessResponse({
+                message: "Delete product successfully",
+                metadata: results,
+            }).send(res)
+        case 404:
+            return new NotFoundResponse({ message: results?.message }).send(res)
+        default:
+            return new ErrorResponse({ message: results?.message }).send(res)
+    }
+}
 
 module.exports = {
     fetchAllProducts,

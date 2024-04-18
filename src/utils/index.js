@@ -15,5 +15,9 @@ const generateUniqueProductSlug = async (product_slug, productRepository) => {
     }
     return slug
 }
+const checkProductExists = async (product_id, productRepository) => {
+    const product = await productRepository.findById({ product_id })
+    return product ? true : false
+}
 
-module.exports = { getInfoData, generateUniqueProductSlug }
+module.exports = { getInfoData, generateUniqueProductSlug, checkProductExists }
