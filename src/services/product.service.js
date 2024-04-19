@@ -1,10 +1,6 @@
 "use strict"
 
-const {
-    generateUniqueProductSlug,
-    getInfoData,
-    checkProductExists,
-} = require("../utils")
+const { generateUniqueProductSlug, getInfoData } = require("../utils")
 
 const productRepository = require("../models/repositories/product.repo")
 class ProductSerive {
@@ -80,13 +76,30 @@ class ProductSerive {
             }
         }
     }
+    static findById = async ({ product_id }) => {
+        try {
+            const product = await productRepository.findById({ product_id })
+            if (!product) {
+                return {
+                    code: 404,
+                    message: "Product not found",
+                }
+            }
+            return {
+                code: 200,
+                product,
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
 
     static delete = async ({ product_id }) => {
         try {
-            const isExists = await checkProductExists(
-                product_id,
-                productRepository
-            )
+            const isExists = await checkProductExists(product_id)
             if (isExists) {
                 await productRepository.deleteById({ product_id })
                 return {
@@ -103,4 +116,10 @@ class ProductSerive {
         }
     }
 }
+
+const checkProductExists = async (product_id) => {
+    const product = await productRepository.findById({ product_id })
+    return product ? true : false
+}
+
 module.exports = ProductSerive
