@@ -115,6 +115,24 @@ class ProductSerive {
             }
         }
     }
+    static update = async ({ product_id }) => {
+        try {
+            const isExists = await checkProductExists(product_id)
+            if (isExists) {
+                await productRepository.deleteById({ product_id })
+                return {
+                    code: 200,
+                    message: "Delete product successfully",
+                }
+            }
+            return { code: 404, message: "Product does not exist" }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
 }
 
 const checkProductExists = async (product_id) => {
