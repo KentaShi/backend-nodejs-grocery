@@ -29,14 +29,14 @@ class NotModifiedResponse extends ErrorResponse {
     }
 }
 
-// class BadRequestError extends ErrorResponse {
-//     constructor(
-//         message = ReasonPhrases.BAD_REQUEST,
-//         status = StatusCodes.BAD_REQUEST
-//     ) {
-//         super(message, status)
-//     }
-// }
+class BadRequestResponse extends ErrorResponse {
+    constructor({
+        message = ReasonPhrases.BAD_REQUEST,
+        status = StatusCodes.BAD_REQUEST,
+    }) {
+        super({ message, status })
+    }
+}
 class UnauthorizedResponse extends ErrorResponse {
     constructor({
         message = ReasonPhrases.UNAUTHORIZED,
@@ -51,4 +51,5 @@ module.exports = {
     UnauthorizedResponse,
     NotFoundResponse,
     NotModifiedResponse,
+    BadRequestResponse,
 }
