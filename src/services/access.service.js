@@ -21,7 +21,7 @@ class AccessService {
             if (!foundUser) {
                 return {
                     code: 404,
-                    message: "Username not found",
+                    message: "Invalid username",
                 }
             }
 
@@ -105,13 +105,19 @@ class AccessService {
         return { code: 200, accessToken, refreshToken: refToken }
     }
 
-    static register = async ({ username, password }) => {
+    static register = async ({ username, password, confirmPassword }) => {
         try {
+            if (password !== confirmPassword) {
+                return {
+                    code: 400,
+                    message: "Passwords do not match",
+                }
+            }
             const foundUser = await findUserByUsername({ username })
             if (foundUser) {
                 return {
-                    code: 304,
-                    message: "User already registered",
+                    code: 409,
+                    message: "This username already exists",
                 }
             }
             const passwordHashed = await bcrypt.hash(password, 10)

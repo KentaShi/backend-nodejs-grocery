@@ -2,8 +2,11 @@
 const { StatusCodes, ReasonPhrases } = require("../utils/httpStatusCode")
 
 class ErrorResponse {
-    constructor({ message, status = StatusCodes.INTERNAL_SERVER_ERROR }) {
-        this.message = message ? message : ReasonPhrases.INTERNAL_SERVER_ERROR
+    constructor({
+        message = ReasonPhrases.INTERNAL_SERVER_ERROR,
+        status = StatusCodes.INTERNAL_SERVER_ERROR,
+    }) {
+        this.message = message
         this.status = status
     }
     send(res, headers = {}) {
@@ -24,6 +27,14 @@ class NotModifiedResponse extends ErrorResponse {
     constructor({
         message = ReasonPhrases.NOT_MODIFIED,
         status = StatusCodes.NOT_MODIFIED,
+    }) {
+        super({ message, status })
+    }
+}
+class ConflictResponse extends ErrorResponse {
+    constructor({
+        message = ReasonPhrases.CONFLICT,
+        status = StatusCodes.CONFLICT,
     }) {
         super({ message, status })
     }
@@ -51,5 +62,6 @@ module.exports = {
     UnauthorizedResponse,
     NotFoundResponse,
     NotModifiedResponse,
+    ConflictResponse,
     BadRequestResponse,
 }
