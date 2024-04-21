@@ -119,7 +119,7 @@ class ProductSerive {
         try {
             const isExists = await checkProductExists(product_id)
             if (isExists) {
-                await productRepository.deleteById({ product_id })
+                await productRepository.updateById({ product_id })
                 return {
                     code: 200,
                     message: "Delete product successfully",

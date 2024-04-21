@@ -39,7 +39,21 @@ const addNewProduct = async (req, res, next) => {
             return new ErrorResponse({ message: results?.message }).send(res)
     }
 }
-const updateProductById = async (req, res, next) => {}
+const updateProductById = async (req, res, next) => {
+    const { id } = req.params
+    const { code, ...results } = await ProductSerive.update({ product_id: id })
+    switch (code) {
+        case 200:
+            return new SuccessResponse({
+                message: "Update product successfully",
+                metadata: results,
+            }).send(res)
+        case 404:
+            return new NotFoundResponse({ message: results?.message }).send(res)
+        default:
+            return new ErrorResponse({ message: results?.message }).send(res)
+    }
+}
 const deleteProductById = async (req, res, next) => {
     const { id } = req.params
     const { code, ...results } = await ProductSerive.delete({ product_id: id })

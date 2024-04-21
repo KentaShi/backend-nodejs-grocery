@@ -3,12 +3,24 @@ const router = require("express").Router()
 const asyncHandler = require("../../helpers/asyncHandler")
 const accessController = require("../../controllers/access.controller")
 const { authenticate, verifyAccessToken } = require("../../middlewares/auth")
+const { loginValidator, registerValidator } = require("../../helpers/validator")
+const { validate } = require("../../middlewares/validate")
 
 // sign up
-router.post("/register", asyncHandler(accessController.register))
+router.post(
+    "/register",
+    registerValidator,
+    validate,
+    asyncHandler(accessController.register)
+)
 
 //login
-router.post("/login", asyncHandler(accessController.login))
+router.post(
+    "/login",
+    loginValidator,
+    validate,
+    asyncHandler(accessController.login)
+)
 
 //get authenticated
 router.post("/getAuth", asyncHandler(accessController.getAuth))

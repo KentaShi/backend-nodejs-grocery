@@ -7,4 +7,21 @@ const productValidator = [
     body("product_thumb", "Product Thumb does not empty").notEmpty(),
 ]
 
-module.exports = { productValidator }
+const loginValidator = [
+    body("username", "Username does not empty").notEmpty(),
+    body("password", "Password does not empty").notEmpty(),
+]
+
+const registerValidator = [
+    body("username", "Username is required").notEmpty(),
+    body("password", "Password must be at least 4 characters").isLength({
+        min: 4,
+    }),
+    body("confirmPassword", "Passwords do not match!").custom(
+        (value, { req }) => {
+            return value === req.body.password
+        }
+    ),
+]
+
+module.exports = { productValidator, loginValidator, registerValidator }

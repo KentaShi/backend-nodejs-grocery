@@ -6,38 +6,44 @@ const {
     NotFoundResponse,
     UnauthorizedResponse,
     NotModifiedResponse,
+    BadRequestResponse,
+    ConflictResponse,
 } = require("../response/error.response")
 const { SuccessResponse } = require("../response/success.response")
 const AccessService = require("../services/access.service")
 
 const login = async (req, res, next) => {
-    const { code, ...results } = await AccessService.login(req.body)
+    try {
+        const { code, ...results } = await AccessService.login(req.body)
 
-    switch (code) {
-        case 200:
-            // res.cookie("accessToken", results.tokens.accessToken, {
-            //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            //     httpOnly: true,
-            //     secure: true,
-            // }).cookie("refreshToken", results.tokens.refreshToken, {
-            //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            //     httpOnly: true,
-            //     secure: true,
-            // })
-            return new SuccessResponse({
-                message: "Login successful",
-                metadata: results,
-            }).send(res)
-        case 404:
-            return new NotFoundResponse({
-                message: results?.message,
-            }).send(res)
-        case 401:
-            return new UnauthorizedResponse({ message: results?.message }).send(
-                res
-            )
-        default:
-            return new ErrorResponse({ message: "Login failed" }).send(res)
+        switch (code) {
+            case 200:
+                // res.cookie("accessToken", results.tokens.accessToken, {
+                //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                //     httpOnly: true,
+                //     secure: true,
+                // }).cookie("refreshToken", results.tokens.refreshToken, {
+                //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                //     httpOnly: true,
+                //     secure: true,
+                // })
+                return new SuccessResponse({
+                    message: "Login successful",
+                    metadata: results,
+                }).send(res)
+            case 404:
+                return new NotFoundResponse({
+                    message: results?.message,
+                }).send(res)
+            case 401:
+                return new UnauthorizedResponse({
+                    message: results?.message,
+                }).send(res)
+            default:
+                return new ErrorResponse({ message: "Login failed" }).send(res)
+        }
+    } catch (error) {
+        next(error)
     }
 }
 
@@ -62,19 +68,27 @@ const logout = async (req, res, next) => {
 }
 
 const register = async (req, res, next) => {
-    const { code, ...results } = await AccessService.register(req.body)
-    switch (code) {
-        case 201:
-            return new SuccessResponse({
-                message: "Register successful",
-                metadata: results,
-            }).send(res)
-        case 304:
-            return new NotModifiedResponse({ message: results?.message }).send(
-                res
-            )
-        default:
-            return new ErrorResponse().send(res)
+    try {
+        const { code, ...results } = await AccessService.register(req.body)
+        switch (code) {
+            case 201:
+                return new SuccessResponse({
+                    message: "Register successful",
+                    metadata: results,
+                }).send(res)
+            case 409:
+                return new ConflictResponse({
+                    message: results?.message,
+                }).send(res)
+            case 400:
+                return new BadRequestResponse({
+                    message: results?.message,
+                }).send(res)
+            default:
+                return new ErrorResponse().send(res)
+        }
+    } catch (error) {
+        next(error)
     }
 }
 
