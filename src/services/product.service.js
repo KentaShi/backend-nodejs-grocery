@@ -115,14 +115,14 @@ class ProductSerive {
             }
         }
     }
-    static update = async ({ product_id }) => {
+    static update = async (product_id, data) => {
         try {
             const isExists = await checkProductExists(product_id)
             if (isExists) {
-                await productRepository.updateById({ product_id })
+                await productRepository.updateById(product_id, data)
                 return {
                     code: 200,
-                    message: "Delete product successfully",
+                    message: "Update product successfully.",
                 }
             }
             return { code: 404, message: "Product does not exist" }
