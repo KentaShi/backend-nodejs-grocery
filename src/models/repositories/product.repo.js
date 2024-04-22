@@ -25,14 +25,16 @@ const add = async ({
         product_slug,
     })
 }
-const updateById = async (data) => {
-    await ProductModel.updateOne(
-        { _id: data.product_id },
+const updateById = async (id, data) => {
+    return await ProductModel.updateOne(
+        { _id: id },
         {
-            product_name: data.product_name,
-            product_price: data.product_price,
-            product_cate: data.product_cate,
-            product_thumb: data.product_thumb,
+            $set: {
+                product_name: data.product_name,
+                product_price: data.product_price,
+                product_cate: data.product_cate,
+                product_thumb: data.product_thumb,
+            },
         }
     )
 }

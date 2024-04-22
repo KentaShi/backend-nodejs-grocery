@@ -41,11 +41,14 @@ const addNewProduct = async (req, res, next) => {
 }
 const updateProductById = async (req, res, next) => {
     const { id } = req.params
-    const { code, ...results } = await ProductSerive.update({ product_id: id })
+    const data = req.body
+    const { code, ...results } = await ProductSerive.update(id, data)
     switch (code) {
         case 200:
             return new SuccessResponse({
-                message: "Update product successfully",
+                message: results?.message
+                    ? results.message
+                    : "Update product successfully",
                 metadata: results,
             }).send(res)
         case 404:
