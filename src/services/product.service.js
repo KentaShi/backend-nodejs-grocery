@@ -133,6 +133,26 @@ class ProductSerive {
             }
         }
     }
+    static searchProducts = async (query) => {
+        try {
+            const products = await productRepository.search(query)
+            if (products.length > 0) {
+                return {
+                    code: 200,
+                    products,
+                }
+            }
+            return {
+                code: 404,
+                message: `Not Found product with query ${query}`,
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
 }
 
 const checkProductExists = async (product_id) => {

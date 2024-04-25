@@ -72,6 +72,30 @@ const deleteProductById = async (req, res, next) => {
             return new ErrorResponse({ message: results?.message }).send(res)
     }
 }
+const searchProduct = async (req, res, next) => {
+    try {
+        // bug here: cannot access to search products
+        const { query } = req.params
+        const { code, ...results } = await ProductSerive.searchProducts(query)
+        switch (code) {
+            case 200:
+                return new SuccessResponse({
+                    message: "Found products",
+                    metadata: results,
+                }).send(res)
+            case 404:
+                return new NotFoundResponse({ message: results?.message }).send(
+                    res
+                )
+            default:
+                return new ErrorResponse({ message: results?.message }).send(
+                    res
+                )
+        }
+    } catch (error) {
+        next(error)
+    }
+}
 
 module.exports = {
     fetchAllProducts,
@@ -79,4 +103,5 @@ module.exports = {
     addNewProduct,
     updateProductById,
     deleteProductById,
+    searchProduct,
 }
