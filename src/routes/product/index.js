@@ -13,6 +13,9 @@ router.get("/all", asyncHandler(productController.fetchAllProducts))
 //fetch product by id
 router.get("/:id", asyncHandler(productController.fetchProductById))
 
+//search
+router.get("/search/:query", asyncHandler(productController.searchProduct))
+
 //add new product
 router.post(
     "/",

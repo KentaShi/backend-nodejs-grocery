@@ -41,4 +41,20 @@ const updateById = async (id, data) => {
 const deleteById = async ({ product_id }) => {
     await ProductModel.deleteOne({ _id: product_id })
 }
-module.exports = { findAll, findById, findBySlug, add, updateById, deleteById }
+const search = async (query) => {
+    //bug: "text index required for $text query"
+    return await ProductModel.find({
+        $text: {
+            $search: query,
+        },
+    }).lean()
+}
+module.exports = {
+    findAll,
+    findById,
+    findBySlug,
+    add,
+    updateById,
+    deleteById,
+    search,
+}

@@ -11,6 +11,7 @@ const {
 } = require("../response/error.response")
 const { SuccessResponse } = require("../response/success.response")
 const AccessService = require("../services/access.service")
+const JWTService = require("../services/jwt.service")
 
 const login = async (req, res, next) => {
     try {
@@ -111,6 +112,10 @@ const getAuth = async (req, res, next) => {
                 }).send(res)
             case 404:
                 return new NotFoundResponse({
+                    message: results?.message,
+                }).send(res)
+            case 401:
+                return new UnauthorizedResponse({
                     message: results?.message,
                 }).send(res)
             default:

@@ -72,6 +72,7 @@ class AccessService {
     static getAuth = async ({ refreshToken }) => {
         try {
             const { userId } = await verifyRefreshToken(refreshToken)
+            console.log(userId)
             const accessToken = await signAccessToken(userId)
             const foundUser = await findUserById({ userId })
             if (!foundUser) {
@@ -91,6 +92,13 @@ class AccessService {
                 },
             }
         } catch (error) {
+            console.log(error.message)
+            if (error.message === "jwt expired") {
+                return {
+                    code: 401,
+                    message: "Please login",
+                }
+            }
             return {
                 code: 500,
                 message: error.message,
