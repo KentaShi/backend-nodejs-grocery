@@ -1,4 +1,4 @@
-const { body } = require("express-validator")
+const { body, query } = require("express-validator")
 
 const productValidator = [
     body("product_name", "Product Name does not empty").notEmpty(),
@@ -24,4 +24,11 @@ const registerValidator = [
     ),
 ]
 
-module.exports = { productValidator, loginValidator, registerValidator }
+const searchValidator = [query("q", "Text search is empty!").notEmpty()]
+
+module.exports = {
+    productValidator,
+    loginValidator,
+    registerValidator,
+    searchValidator,
+}
