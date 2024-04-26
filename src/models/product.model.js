@@ -29,5 +29,7 @@ var productSchema = new Schema(
     { timestamps: true, collection: COLLECTION_NAME }
 )
 
+productSchema.index({ product_name: "text" })
+
 //Export the model
 module.exports = model(DOCUMENT_NAME, productSchema)

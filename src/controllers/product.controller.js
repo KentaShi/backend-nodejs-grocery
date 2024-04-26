@@ -74,8 +74,7 @@ const deleteProductById = async (req, res, next) => {
 }
 const searchProduct = async (req, res, next) => {
     try {
-        // bug here: cannot access to search products
-        const { query } = req.params
+        const query = req.query.q
         const { code, ...results } = await ProductSerive.searchProducts(query)
         switch (code) {
             case 200:

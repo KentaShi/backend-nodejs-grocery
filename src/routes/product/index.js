@@ -4,17 +4,25 @@ const express = require("express")
 const router = express.Router()
 const productController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
-const { productValidator } = require("../../helpers/validator")
-const { validate } = require("../../middlewares/validate")
+const { productValidator, searchValidator } = require("../../helpers/validator")
+const { validate, test } = require("../../middlewares/validate")
+
+//search
+router.get(
+    "/search",
+    searchValidator,
+    validate,
+    asyncHandler(productController.searchProduct)
+)
 
 //fetch all products
 router.get("/all", asyncHandler(productController.fetchAllProducts))
 
+//fetch products by category
+router.get("/category/:cat", asyncHandler(productController.fetchAllProducts))
+
 //fetch product by id
 router.get("/:id", asyncHandler(productController.fetchProductById))
-
-//search
-router.get("/search/:query", asyncHandler(productController.searchProduct))
 
 //add new product
 router.post(
