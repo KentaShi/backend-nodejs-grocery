@@ -96,6 +96,26 @@ class ProductSerive {
             }
         }
     }
+    static findByCategory = async (category) => {
+        try {
+            const products = await productRepository.findByCate({ category })
+            if (products.length > 0) {
+                return {
+                    code: 200,
+                    products,
+                }
+            }
+            return {
+                code: 404,
+                message: `Not Found product with category:${category}`,
+            }
+        } catch (error) {
+            return {
+                code: 500,
+                message: error.message,
+            }
+        }
+    }
 
     static delete = async ({ product_id }) => {
         try {

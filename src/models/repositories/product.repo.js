@@ -10,6 +10,9 @@ const findById = async ({ product_id }) => {
 const findBySlug = async ({ slug }) => {
     return await ProductModel.findOne({ product_slug: slug }).lean()
 }
+const findByCate = async ({ category }) => {
+    return await ProductModel.find({ product_cate: category }).lean()
+}
 const add = async ({
     product_name,
     product_thumb,
@@ -53,6 +56,7 @@ module.exports = {
     findAll,
     findById,
     findBySlug,
+    findByCate,
     add,
     updateById,
     deleteById,

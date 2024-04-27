@@ -5,7 +5,7 @@ const router = express.Router()
 const productController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
 const { productValidator, searchValidator } = require("../../helpers/validator")
-const { validate, test } = require("../../middlewares/validate")
+const { validate } = require("../../middlewares/validate")
 
 //search
 router.get(
@@ -19,7 +19,10 @@ router.get(
 router.get("/all", asyncHandler(productController.fetchAllProducts))
 
 //fetch products by category
-router.get("/category/:cat", asyncHandler(productController.fetchAllProducts))
+router.get(
+    "/category/:cat",
+    asyncHandler(productController.fetchProductByCategory)
+)
 
 //fetch product by id
 router.get("/:id", asyncHandler(productController.fetchProductById))
