@@ -23,6 +23,23 @@ const fetchAllProducts = async (req, res, next) => {
     }
 }
 const fetchProductById = async (req, res, next) => {}
+const fetchProductByCategory = async (req, res, next) => {
+    const { cat } = req.params
+    const { code, ...results } = await ProductSerive.findByCategory(cat)
+    switch (code) {
+        case 200:
+            return new SuccessResponse({
+                message: `Found products by ${cat}`,
+                metadata: results,
+            }).send(res)
+        case 304:
+            return new NotModifiedResponse({ message: results?.message }).send(
+                res
+            )
+        default:
+            return new ErrorResponse({ message: results?.message }).send(res)
+    }
+}
 const addNewProduct = async (req, res, next) => {
     const { code, ...results } = await ProductSerive.add(req.body)
     switch (code) {
@@ -103,4 +120,5 @@ module.exports = {
     updateProductById,
     deleteProductById,
     searchProduct,
+    fetchProductByCategory,
 }
