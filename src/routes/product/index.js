@@ -6,7 +6,9 @@ const productController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
 const { productValidator, searchValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
+const { authenticate } = require("../../middlewares/auth")
 
+//router.use(authenticate)
 //search
 router.get(
     "/search",

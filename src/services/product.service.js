@@ -147,6 +147,7 @@ class ProductSerive {
             }
             return { code: 404, message: "Product does not exist" }
         } catch (error) {
+            console.log(error)
             return {
                 code: 500,
                 message: error.message,
