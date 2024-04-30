@@ -1,4 +1,6 @@
 const express = require("express")
+const http = require("http")
+const socketIo = require("socket.io")
 const helmet = require("helmet")
 const morgan = require("morgan")
 const cors = require("cors")
@@ -45,4 +47,20 @@ app.use((error, req, res, next) => {
     })
 })
 
-module.exports = app
+const server = http.createServer(app)
+const io = socketIo(server, {
+    cors: {
+        origin: "*", // Allow all origins
+        methods: ["GET", "POST"], // Allow these HTTP methods
+        allowedHeaders: ["my-custom-header"], // Allow these headers
+        credentials: true, // Enable credentials (cookies, authorization headers, TLS client certificates)
+    },
+})
+
+io.on("connection", (socket) => {
+    socket.on("updated", (updatedProduct) => {
+        io.emit("updated", updatedProduct)
+    })
+})
+
+module.exports = { server, io }
