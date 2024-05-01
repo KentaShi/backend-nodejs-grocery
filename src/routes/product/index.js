@@ -8,7 +8,6 @@ const { productValidator, searchValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 
-//router.use(authenticate)
 //search
 router.get(
     "/search",
@@ -28,6 +27,8 @@ router.get(
 
 //fetch product by id
 router.get("/:id", asyncHandler(productController.fetchProductById))
+
+router.use(authenticate)
 
 //add new product
 router.post(
