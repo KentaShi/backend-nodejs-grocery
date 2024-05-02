@@ -1,7 +1,7 @@
 "use strict"
 const router = require("express").Router()
 const asyncHandler = require("../../helpers/asyncHandler")
-const accessController = require("../../controllers/access.controller")
+const AccessController = require("../../controllers/access.controller")
 const { authenticate, verifyAccessToken } = require("../../middlewares/auth")
 const { loginValidator, registerValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
@@ -11,7 +11,7 @@ router.post(
     "/register",
     registerValidator,
     validate,
-    asyncHandler(accessController.register)
+    asyncHandler(AccessController.register)
 )
 
 //login
@@ -19,19 +19,19 @@ router.post(
     "/login",
     loginValidator,
     validate,
-    asyncHandler(accessController.login)
+    asyncHandler(AccessController.login)
 )
 
 //get authenticated
-router.post("/getAuth", asyncHandler(accessController.getAuth))
+router.post("/getAuth", asyncHandler(AccessController.getAuth))
 
 //refresh token
-router.post("/refresh-token", asyncHandler(accessController.refreshToken))
+router.post("/refresh-token", asyncHandler(AccessController.refreshToken))
 
 //authenticate
 router.use(authenticate)
 
 //logout
-router.post("/logout", asyncHandler(accessController.logout))
+router.post("/logout", asyncHandler(AccessController.logout))
 
 module.exports = router

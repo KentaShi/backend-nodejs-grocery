@@ -2,7 +2,7 @@
 
 const express = require("express")
 const router = express.Router()
-const productController = require("../../controllers/product.controller")
+const ProductController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
 const { productValidator, searchValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
@@ -13,20 +13,20 @@ router.get(
     "/search",
     searchValidator,
     validate,
-    asyncHandler(productController.searchProduct)
+    asyncHandler(ProductController.searchProduct)
 )
 
 //fetch all products
-router.get("/all", asyncHandler(productController.fetchAllProducts))
+router.get("/all", asyncHandler(ProductController.fetchAllProducts))
 
 //fetch products by category
 router.get(
     "/category/:cat",
-    asyncHandler(productController.fetchProductByCategory)
+    asyncHandler(ProductController.fetchProductByCategory)
 )
 
 //fetch product by id
-router.get("/:id", asyncHandler(productController.fetchProductById))
+router.get("/:id", asyncHandler(ProductController.fetchProductById))
 
 router.use(authenticate)
 
@@ -35,7 +35,7 @@ router.post(
     "/",
     productValidator,
     validate,
-    asyncHandler(productController.addNewProduct)
+    asyncHandler(ProductController.addNewProduct)
 )
 
 //update product by id
@@ -43,10 +43,10 @@ router.put(
     "/:id",
     productValidator,
     validate,
-    asyncHandler(productController.updateProductById)
+    asyncHandler(ProductController.updateProductById)
 )
 
 //delete product by id
-router.delete("/:id", asyncHandler(productController.deleteProductById))
+router.delete("/:id", asyncHandler(ProductController.deleteProductById))
 
 module.exports = router
