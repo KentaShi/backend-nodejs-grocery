@@ -2,11 +2,7 @@
 const bcrypt = require("bcrypt")
 
 const { getInfoData } = require("../utils")
-const {
-    signAccessToken,
-    signRefreshToken,
-    verifyRefreshToken,
-} = require("./jwt.service")
+const JWTService = require("./jwt.service")
 const {
     findUserByUsername,
     createUser,
@@ -32,8 +28,10 @@ class AccessService {
                     message: "Wrong password",
                 }
             }
-            const accessToken = await signAccessToken(foundUser._id)
-            const refreshToken = await signRefreshToken(foundUser._id)
+            const accessToken = await JWTService.signAccessToken(foundUser._id)
+            const refreshToken = await JWTService.signRefreshToken(
+                foundUser._id
+            )
 
             return {
                 code: 200,
@@ -71,9 +69,9 @@ class AccessService {
 
     static getAuth = async ({ refreshToken }) => {
         try {
-            const { userId } = await verifyRefreshToken(refreshToken)
+            const { userId } = await JWTService.verifyRefreshToken(refreshToken)
             console.log(userId)
-            const accessToken = await signAccessToken(userId)
+            const accessToken = await JWTService.signAccessToken(userId)
             const foundUser = await findUserById({ userId })
             if (!foundUser) {
                 return {
@@ -107,9 +105,9 @@ class AccessService {
     }
 
     static refreshToken = async ({ refreshToken }) => {
-        const { userId } = await verifyRefreshToken(refreshToken)
-        const accessToken = await signAccessToken(userId)
-        const refToken = await signRefreshToken(userId)
+        const { userId } = await JWTService.verifyRefreshToken(refreshToken)
+        const accessToken = await JWTService.signAccessToken(userId)
+        const refToken = await JWTService.signRefreshToken(userId)
         return { code: 200, accessToken, refreshToken: refToken }
     }
 

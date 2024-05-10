@@ -11,10 +11,14 @@ var tokenSchema = new Schema(
             required: true,
             ref: "User",
         },
-        refreshTokensUsed: {
-            type: Array,
-            default: [],
+        refreshToken: {
+            type: String,
+            default: "",
         },
+        // refreshTokensUsed: {
+        //     type: Array,
+        //     default: [],
+        // },
     },
     { timestamps: true, collection: COLLECTION_NAME }
 )
