@@ -9,6 +9,7 @@ const {
     findUserById,
 } = require("../models/repositories/user.repo")
 const client = require("../db/redis.init")
+const tokenService = require("./token.service")
 
 class AccessService {
     static login = async ({ username, password }) => {
@@ -54,8 +55,9 @@ class AccessService {
 
     static logout = async ({ userId }) => {
         try {
-            console.log(userId)
-            client.del(userId.toString(), (err, reply) => {})
+            await tokenService.deleteByUserId({ userId })
+            // using redis
+            // client.del(userId.toString(), (err, reply) => {})
             return {
                 code: 200,
             }
