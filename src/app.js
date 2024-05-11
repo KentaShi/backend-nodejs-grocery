@@ -26,7 +26,7 @@ app.use(cookieParser())
 require("./db/mongodb.init")
 
 //init redis
-require("./db/redis.init")
+//require("./db/redis.init")
 
 //init routes
 app.use("", require("./routes"))

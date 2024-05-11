@@ -33,21 +33,35 @@ class JWTService {
 
             JWT.sign(payload, secret, options, async (err, token) => {
                 if (err) reject(err)
-                await TokenService.create({
+                const foundUserToken = await TokenService.findByUserId({
                     userId,
-                    refreshToken: token,
                 })
-                //resolve(token)
-                client.set(
-                    userId.toString(),
-                    token,
-                    "EX",
-                    365 * 24 * 60 * 60,
-                    (err, reply) => {
-                        if (err) reject(err)
-                        resolve(token)
-                    }
-                )
+                let userToken
+                if (foundUserToken) {
+                    userToken = await TokenService.updateByUserId({
+                        userId,
+                        refreshToken: token,
+                    })
+                } else {
+                    userToken = await TokenService.create({
+                        userId,
+                        refreshToken: token,
+                    })
+                }
+
+                resolve(token)
+
+                // using redis
+                // client.set(
+                //     userId.toString(),
+                //     token,
+                //     "EX",
+                //     365 * 24 * 60 * 60,
+                //     (err, reply) => {
+                //         if (err) reject(err)
+                //         resolve(token)
+                //     }
+                // )
             })
         })
     }
@@ -57,17 +71,29 @@ class JWTService {
             JWT.verify(
                 refreshToken,
                 process.env.REFRESH_TOKEN_SECRET,
-                (err, payload) => {
+                async (err, payload) => {
                     if (err) return reject(err)
-                    client.get(payload.userId, (err, reply) => {
-                        if (err) return reject(err)
-                        if (refreshToken === reply) resolve(payload)
-                        return reject(
-                            new UnauthorizedResponse({
-                                message: "Invalid refresh token",
-                            })
-                        )
+                    const userToken = await TokenService.findByUserId({
+                        userId: payload.userId,
                     })
+                    if (refreshToken === userToken.refreshToken) {
+                        resolve(payload)
+                    }
+                    reject(
+                        new UnauthorizedResponse({
+                            message: "Invalid refresh token",
+                        })
+                    )
+                    // using redis
+                    // client.get(payload.userId, (err, reply) => {
+                    //     if (err) return reject(err)
+                    //     if (refreshToken === reply) resolve(payload)
+                    //     return reject(
+                    //         new UnauthorizedResponse({
+                    //             message: "Invalid refresh token",
+                    //         })
+                    //     )
+                    // })
                 }
             )
         })
