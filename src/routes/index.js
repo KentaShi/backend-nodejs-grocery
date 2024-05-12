@@ -16,5 +16,6 @@ router.get("/api/test-api", (req, res, next) => {
 
 router.use("/api/access", require("./access"))
 router.use("/api/product", require("./product"))
+router.use("/api/upload", require("./upload"))
 
 module.exports = router
