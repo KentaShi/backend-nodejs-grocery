@@ -1,16 +1,19 @@
 "use strict"
 
 const multer = require("multer")
+const cloudinary = require("./cloudinary.config")
+const { CloudinaryStorage } = require("multer-storage-cloudinary")
 
-const uploadDisk = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, "./src/uploads")
-        },
-        filename: (req, file, cb) => {
-            cb(null, `${file.originalname}-${Date.now()}`)
-        },
-    }),
+const storage = new CloudinaryStorage({
+    cloudinary,
+    allowedFormats: ["jpg", "png"],
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
+    },
 })
 
-module.exports = { uploadDisk }
+const uploadCloud = multer({
+    storage: storage,
+})
+
+module.exports = { uploadCloud }
