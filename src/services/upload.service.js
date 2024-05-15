@@ -6,7 +6,6 @@ class UploadService {
     uploadImageFromsLocal = async ({ path }) => {
         try {
             const result = await cloudinary.uploader.upload(path, {
-                public_id: "thumb",
                 folder: "taphoachituyet",
             })
             return {
