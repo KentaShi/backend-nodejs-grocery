@@ -14,7 +14,6 @@ class UploadController {
             if (!file) {
                 return new BadRequestResponse({ message: "File missing" })
             }
-            console.log(file)
 
             const { code, ...results } =
                 await UploadService.uploadImageFromsLocal({ path: file.path })
