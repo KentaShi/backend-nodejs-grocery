@@ -72,7 +72,7 @@ class AccessService {
     static getAuth = async ({ refreshToken }) => {
         try {
             const { userId } = await JWTService.verifyRefreshToken(refreshToken)
-            console.log(userId)
+
             const accessToken = await JWTService.signAccessToken(userId)
             const foundUser = await findUserById({ userId })
             if (!foundUser) {
