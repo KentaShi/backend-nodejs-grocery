@@ -23,7 +23,11 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 //init mongoose db
-require("./db/mongodb.init")
+//require("./db/mongodb.init")
+
+//init mongoose db cloud
+const { connectDB } = require("./db/mongodbCloud.init")
+connectDB()
 
 //init redis
 //require("./db/redis.init")

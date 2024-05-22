@@ -13,7 +13,7 @@ class JWTService {
             const payload = { userId }
             const secret = process.env.ACCESS_TOKEN_SECRET
             const options = {
-                expiresIn: "10s",
+                expiresIn: "1h",
             }
 
             JWT.sign(payload, secret, options, (err, res) => {
@@ -28,7 +28,7 @@ class JWTService {
             const payload = { userId }
             const secret = process.env.REFRESH_TOKEN_SECRET
             const options = {
-                expiresIn: "1d",
+                expiresIn: "30d",
             }
 
             JWT.sign(payload, secret, options, async (err, token) => {
