@@ -7,6 +7,10 @@ const productValidator = [
     body("product_thumb", "Product Thumb does not empty").notEmpty(),
 ]
 
+const categoryValidator = [
+    body("cate_name", "Cate name does not empty").notEmpty(),
+]
+
 const loginValidator = [
     body("username", "Username does not empty").notEmpty(),
     body("password", "Password does not empty").notEmpty(),
@@ -31,4 +35,5 @@ module.exports = {
     loginValidator,
     registerValidator,
     searchValidator,
+    categoryValidator,
 }
