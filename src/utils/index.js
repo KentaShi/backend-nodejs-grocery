@@ -16,4 +16,12 @@ const generateUniqueProductSlug = async (product_slug, productRepository) => {
     return slug
 }
 
-module.exports = { getInfoData, generateUniqueProductSlug }
+const generateCategorySlug = ({ cate_name }) => {
+    return slugify(cate_name, { lower: true })
+}
+
+module.exports = {
+    getInfoData,
+    generateUniqueProductSlug,
+    generateCategorySlug,
+}
