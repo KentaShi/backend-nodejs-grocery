@@ -1,6 +1,9 @@
 "use strict"
 
-const { ErrorResponse } = require("../response/error.response")
+const {
+    ErrorResponse,
+    NotFoundResponse,
+} = require("../response/error.response")
 const { SuccessResponse } = require("../response/success.response")
 const CategoryService = require("../services/category.service")
 
@@ -17,7 +20,27 @@ class CategoryController {
                     metadata: results,
                 }).send(res)
             default:
-                return new ErrorResponse({ message: results?.message })
+                return new ErrorResponse({ message: results?.message }).send(
+                    res
+                )
+        }
+    }
+    findAllCategories = async (req, res, next) => {
+        const { code, ...results } = await this.categoryService.findAll()
+        switch (code) {
+            case 200:
+                return new SuccessResponse({
+                    message: `Found categories`,
+                    metadata: results,
+                }).send(res)
+            case 404:
+                return new NotFoundResponse({
+                    message: results?.message,
+                }).send(res)
+            default:
+                return new ErrorResponse({
+                    message: results?.message,
+                }).send(res)
         }
     }
 }
