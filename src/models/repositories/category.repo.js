@@ -9,6 +9,9 @@ class CategoryRepository {
             cate_slug,
         })
     }
+    findAll = async () => {
+        return await categoryModel.find().lean()
+    }
 }
 
 module.exports = CategoryRepository
