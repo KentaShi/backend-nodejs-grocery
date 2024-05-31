@@ -20,11 +20,7 @@ class CategoryService {
                 category: category,
             }
         } catch (error) {
-            console.log(error)
-            return {
-                code: 500,
-                message: "Error creating category",
-            }
+            throw new Error(error.message)
         }
     }
     findAll = async () => {
