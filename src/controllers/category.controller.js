@@ -12,17 +12,23 @@ class CategoryController {
         this.categoryService = new CategoryService()
     }
     addNewCate = async (req, res, next) => {
-        const { code, ...results } = await this.categoryService.create(req.body)
-        switch (code) {
-            case 200:
-                return new SuccessResponse({
-                    message: `Created category successfully`,
-                    metadata: results,
-                }).send(res)
-            default:
-                return new ErrorResponse({ message: results?.message }).send(
-                    res
-                )
+        try {
+            const { code, ...results } = await this.categoryService.create(
+                req.body
+            )
+            switch (code) {
+                case 200:
+                    return new SuccessResponse({
+                        message: `Created category successfully`,
+                        metadata: results,
+                    }).send(res)
+                default:
+                    return new ErrorResponse({
+                        message: results?.message,
+                    }).send(res)
+            }
+        } catch (error) {
+            next(error)
         }
     }
     findAllCategories = async (req, res, next) => {
