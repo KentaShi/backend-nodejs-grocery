@@ -18,7 +18,7 @@ class AccessService {
             if (!foundUser) {
                 return {
                     code: 404,
-                    message: "Invalid username",
+                    message: "Username hoặc mật khẩu không đúng",
                 }
             }
 
@@ -26,7 +26,7 @@ class AccessService {
             if (!match) {
                 return {
                     code: 401,
-                    message: "Wrong password",
+                    message: "Username hoặc password không đúng",
                 }
             }
             const accessToken = await JWTService.signAccessToken(foundUser._id)
@@ -46,10 +46,7 @@ class AccessService {
                 },
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new Error(error.message)
         }
     }
 
@@ -62,10 +59,7 @@ class AccessService {
                 code: 200,
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new Error(error.message)
         }
     }
 
@@ -125,7 +119,7 @@ class AccessService {
             if (foundUser) {
                 return {
                     code: 409,
-                    message: "This username already exists",
+                    message: "Username đã tồn tại",
                 }
             }
             const passwordHashed = await bcrypt.hash(password, 10)
@@ -140,10 +134,7 @@ class AccessService {
                 }
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new Error(error.message)
         }
     }
 }

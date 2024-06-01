@@ -30,7 +30,9 @@ class ProductController {
     static fetchProductById = async (req, res, next) => {}
     static fetchProductByCategory = async (req, res, next) => {
         const { cat } = req.params
-        const { code, ...results } = await ProductSerive.findByCategory(cat)
+        const { code, ...results } = await ProductSerive.findByCategory({
+            cate_slug: cat,
+        })
         switch (code) {
             case 200:
                 return new SuccessResponse({

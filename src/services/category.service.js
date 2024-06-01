@@ -1,6 +1,11 @@
 "use strict"
 
 const CategoryRepository = require("../models/repositories/category.repo")
+const ProductRepository = require("../models/repositories/product.repo")
+const {
+    NotFoundResponse,
+    BadRequestResponse,
+} = require("../response/error.response")
 const { generateCategorySlug } = require("../utils")
 
 class CategoryService {
@@ -11,6 +16,11 @@ class CategoryService {
     create = async ({ cate_name }) => {
         try {
             const cate_slug = generateCategorySlug({ cate_name })
+            if (this.categoryRepository.isExistByCateSlug({ cate_slug })) {
+                return {
+                    code: 409,
+                }
+            }
             const category = await this.categoryRepository.create({
                 cate_name,
                 cate_slug,
@@ -37,11 +47,27 @@ class CategoryService {
                 message: "No category found",
             }
         } catch (error) {
-            console.log(error)
-            return {
-                code: 500,
-                message: "Error find all categories",
+            throw new Error(error.message)
+        }
+    }
+    deleteOne = async ({ cate_id }) => {
+        try {
+            const foundCate = await this.categoryRepository.findOne({ cate_id })
+            if (!foundCate) {
+                return { code: 404, message: "Not Found category" }
             }
+            const { cate_slug } = foundCate
+            const products = ProductRepository.findByCate({ cate_slug })
+            if (products.length > 0) {
+                return {
+                    code: 400,
+                    message: "Có sản phẩm thuộc phân loại này, không thể xóa",
+                }
+            }
+            await this.categoryRepository.deleteById({ cate_id })
+            return { code: 200, message: "Xóa thành công" }
+        } catch (error) {
+            throw new Error(error.message)
         }
     }
 }
