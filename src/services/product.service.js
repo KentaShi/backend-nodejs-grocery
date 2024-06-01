@@ -96,9 +96,9 @@ class ProductSerive {
             }
         }
     }
-    static findByCategory = async (category) => {
+    static findByCategory = async ({ cate_slug }) => {
         try {
-            const products = await productRepository.findByCate({ category })
+            const products = await productRepository.findByCate({ cate_slug })
             if (products.length > 0) {
                 return {
                     code: 200,

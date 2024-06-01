@@ -18,4 +18,7 @@ router.post(
     asyncHandler(categoryController.addNewCate)
 )
 
+//delete category
+router.delete("/:id", asyncHandler(categoryController.deleteCateById))
+
 module.exports = router

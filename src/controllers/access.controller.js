@@ -30,7 +30,7 @@ class AccessController {
                     //     secure: true,
                     // })
                     return new SuccessResponse({
-                        message: "Login successful",
+                        message: "Đăng nhập thành công",
                         metadata: results,
                     }).send(res)
                 case 404:
