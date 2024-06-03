@@ -6,11 +6,14 @@ const {
     NotModifiedResponse,
 } = require("../response/error.response")
 const { SuccessResponse } = require("../response/success.response")
-const ProductSerive = require("../services/product.service")
+const ProductServive = require("../services/product.service")
 
 class ProductController {
-    static fetchAllProducts = async (req, res, next) => {
-        const { code, ...results } = await ProductSerive.findAll()
+    constructor() {
+        this.productService = new ProductServive()
+    }
+    fetchAllProducts = async (req, res, next) => {
+        const { code, ...results } = await this.productService.findAll()
         switch (code) {
             case 200:
                 return new SuccessResponse({
@@ -27,10 +30,10 @@ class ProductController {
                 )
         }
     }
-    static fetchProductById = async (req, res, next) => {}
-    static fetchProductByCategory = async (req, res, next) => {
+    fetchProductById = async (req, res, next) => {}
+    fetchProductByCategory = async (req, res, next) => {
         const { cat } = req.params
-        const { code, ...results } = await ProductSerive.findByCategory({
+        const { code, ...results } = await this.productService.findByCategory({
             cate_slug: cat,
         })
         switch (code) {
@@ -49,8 +52,8 @@ class ProductController {
                 )
         }
     }
-    static addNewProduct = async (req, res, next) => {
-        const { code, ...results } = await ProductSerive.add(req.body)
+    addNewProduct = async (req, res, next) => {
+        const { code, ...results } = await this.productService.add(req.body)
         switch (code) {
             case 200:
                 return new SuccessResponse({
@@ -67,10 +70,10 @@ class ProductController {
                 )
         }
     }
-    static updateProductById = async (req, res, next) => {
+    updateProductById = async (req, res, next) => {
         const { id } = req.params
         const data = req.body
-        const { code, ...results } = await ProductSerive.update(id, data)
+        const { code, ...results } = await this.productService.update(id, data)
         switch (code) {
             case 200:
                 return new SuccessResponse({
@@ -89,9 +92,9 @@ class ProductController {
                 )
         }
     }
-    static deleteProductById = async (req, res, next) => {
+    deleteProductById = async (req, res, next) => {
         const { id } = req.params
-        const { code, ...results } = await ProductSerive.delete({
+        const { code, ...results } = await this.productService.delete({
             product_id: id,
         })
         switch (code) {
@@ -110,12 +113,11 @@ class ProductController {
                 )
         }
     }
-    static searchProduct = async (req, res, next) => {
+    searchProduct = async (req, res, next) => {
         try {
             const query = req.query.q
-            const { code, ...results } = await ProductSerive.searchProducts(
-                query
-            )
+            const { code, ...results } =
+                await this.productService.searchProducts(query)
             switch (code) {
                 case 200:
                     return new SuccessResponse({
@@ -137,4 +139,4 @@ class ProductController {
     }
 }
 
-module.exports = ProductController
+module.exports = new ProductController()

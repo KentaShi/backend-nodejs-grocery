@@ -10,6 +10,12 @@ const router = express.Router()
 //get all categories
 router.get("/all", asyncHandler(categoryController.findAllCategories))
 
+//get count of products by category
+router.get(
+    "/:cate_slug/count",
+    asyncHandler(categoryController.getCountOfProductsByCate)
+)
+
 //add new category
 router.post(
     "/",

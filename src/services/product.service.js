@@ -2,9 +2,12 @@
 
 const { generateUniqueProductSlug, getInfoData } = require("../utils")
 
-const productRepository = require("../models/repositories/product.repo")
+const ProductRepository = require("../models/repositories/product.repo")
 class ProductSerive {
-    static add = async (data) => {
+    constructor() {
+        this.productRepository = new ProductRepository()
+    }
+    add = async (data) => {
         try {
             const { product_name, product_thumb, product_price, product_cate } =
                 data
@@ -23,7 +26,7 @@ class ProductSerive {
                 product_name,
                 productRepository
             )
-            const newProduct = await productRepository.add({
+            const newProduct = await this.productRepository.add({
                 product_name,
                 product_thumb,
                 product_price,
@@ -56,9 +59,9 @@ class ProductSerive {
             }
         }
     }
-    static findAll = async () => {
+    findAll = async () => {
         try {
-            const products = await productRepository.findAll()
+            const products = await this.productRepository.findAll()
             if (products.length > 0) {
                 return {
                     code: 200,
@@ -76,9 +79,11 @@ class ProductSerive {
             }
         }
     }
-    static findById = async ({ product_id }) => {
+    findById = async ({ product_id }) => {
         try {
-            const product = await productRepository.findById({ product_id })
+            const product = await this.productRepository.findById({
+                product_id,
+            })
             if (!product) {
                 return {
                     code: 404,
@@ -96,9 +101,11 @@ class ProductSerive {
             }
         }
     }
-    static findByCategory = async ({ cate_slug }) => {
+    findByCategory = async ({ cate_slug }) => {
         try {
-            const products = await productRepository.findByCate({ cate_slug })
+            const products = await this.productRepository.findByCate({
+                cate_slug,
+            })
             if (products.length > 0) {
                 return {
                     code: 200,
@@ -117,11 +124,11 @@ class ProductSerive {
         }
     }
 
-    static delete = async ({ product_id }) => {
+    delete = async ({ product_id }) => {
         try {
             const isExists = await checkProductExists(product_id)
             if (isExists) {
-                await productRepository.deleteById({ product_id })
+                await this.productRepository.deleteById({ product_id })
                 return {
                     code: 200,
                     message: "Delete product successfully",
@@ -135,11 +142,11 @@ class ProductSerive {
             }
         }
     }
-    static update = async (product_id, data) => {
+    update = async (product_id, data) => {
         try {
             const isExists = await checkProductExists(product_id)
             if (isExists) {
-                await productRepository.updateById(product_id, data)
+                await this.productRepository.updateById(product_id, data)
                 return {
                     code: 200,
                     message: "Update product successfully.",
@@ -154,9 +161,9 @@ class ProductSerive {
             }
         }
     }
-    static searchProducts = async (query) => {
+    searchProducts = async (query) => {
         try {
-            const products = await productRepository.search(query)
+            const products = await this.productRepository.search(query)
             if (products.length > 0) {
                 return {
                     code: 200,

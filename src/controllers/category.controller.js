@@ -21,7 +21,7 @@ class CategoryController {
             switch (code) {
                 case 200:
                     return new SuccessResponse({
-                        message: "Tạo thành công",
+                        message: "Thêm thành công",
                         metadata: results,
                     }).send(res)
                 case 409:
@@ -79,6 +79,24 @@ class CategoryController {
                 return new ErrorResponse({
                     message: results?.message,
                 }).send(res)
+        }
+    }
+    getCountOfProductsByCate = async (req, res, next) => {
+        try {
+            const { cate_slug } = req.params
+            const { code, count } =
+                await this.categoryService.getCountOfProductsByCateSlug({
+                    cate_slug,
+                })
+            if (code === 200) {
+                return new SuccessResponse({
+                    message: "",
+                    metadata: { count },
+                }).send(res)
+            }
+            throw new Error("Couldn't get count of products")
+        } catch (error) {
+            next(error)
         }
     }
 }
