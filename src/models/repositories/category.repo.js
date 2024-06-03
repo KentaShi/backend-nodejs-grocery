@@ -10,8 +10,7 @@ class CategoryRepository {
         })
     }
     isExistByCateSlug = async ({ cate_slug }) => {
-        const cateExits = await categoryModel.exists({ cate_slug })
-        return cateExits
+        return await categoryModel.exists({ cate_slug })
     }
     findAll = async () => {
         return await categoryModel.find().lean()

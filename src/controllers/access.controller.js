@@ -100,7 +100,7 @@ class AccessController {
             const { refreshToken } = req.body
             if (!refreshToken) {
                 return new NotFoundResponse({
-                    message: "Refresh token not found",
+                    message: "refresh token not found",
                 }).send(res)
             }
             const { code, ...results } = await AccessService.getAuth({

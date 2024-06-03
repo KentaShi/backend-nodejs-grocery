@@ -11,12 +11,16 @@ const { generateCategorySlug } = require("../utils")
 class CategoryService {
     constructor() {
         this.categoryRepository = new CategoryRepository()
+        this.productRepository = new ProductRepository()
     }
 
     create = async ({ cate_name }) => {
         try {
             const cate_slug = generateCategorySlug({ cate_name })
-            if (this.categoryRepository.isExistByCateSlug({ cate_slug })) {
+            const cateExits = await this.categoryRepository.isExistByCateSlug({
+                cate_slug,
+            })
+            if (cateExits) {
                 return {
                     code: 409,
                 }
@@ -50,6 +54,19 @@ class CategoryService {
             throw new Error(error.message)
         }
     }
+    getCountOfProductsByCateSlug = async ({ cate_slug }) => {
+        try {
+            const products = await this.productRepository.findByCate({
+                cate_slug,
+            })
+            return {
+                code: 200,
+                count: products.length,
+            }
+        } catch (error) {
+            throw new Error(error.message)
+        }
+    }
     deleteOne = async ({ cate_id }) => {
         try {
             const foundCate = await this.categoryRepository.findOne({ cate_id })
@@ -57,7 +74,9 @@ class CategoryService {
                 return { code: 404, message: "Not Found category" }
             }
             const { cate_slug } = foundCate
-            const products = ProductRepository.findByCate({ cate_slug })
+            const products = await this.productRepository.findByCate({
+                cate_slug,
+            })
             if (products.length > 0) {
                 return {
                     code: 400,
