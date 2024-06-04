@@ -14,9 +14,14 @@ const AccessService = require("../services/access.service")
 const JWTService = require("../services/jwt.service")
 
 class AccessController {
-    static login = async (req, res, next) => {
+    constructor() {
+        this.accessservice = new AccessService()
+    }
+    login = async (req, res, next) => {
         try {
-            const { code, ...results } = await AccessService.login(req.body)
+            const { code, ...results } = await this.accessservice.login(
+                req.body
+            )
 
             switch (code) {
                 case 200:
@@ -50,10 +55,12 @@ class AccessController {
             next(error)
         }
     }
-    static logout = async (req, res, next) => {
+    logout = async (req, res, next) => {
         try {
             const { userId } = req.payload
-            const { code, ...results } = await AccessService.logout({ userId })
+            const { code, ...results } = await this.accessservice.logout({
+                userId,
+            })
             switch (code) {
                 case 200:
                     res.clearCookie("access_token")
@@ -70,13 +77,15 @@ class AccessController {
         }
     }
 
-    static register = async (req, res, next) => {
+    register = async (req, res, next) => {
         try {
-            const { code, ...results } = await AccessService.register(req.body)
+            const { code, ...results } = await this.accessservice.register(
+                req.body
+            )
             switch (code) {
                 case 201:
                     return new SuccessResponse({
-                        message: "Register successful",
+                        message: "Đăng ký thành công",
                         metadata: results,
                     }).send(res)
                 case 409:
@@ -95,7 +104,7 @@ class AccessController {
         }
     }
 
-    static getAuth = async (req, res, next) => {
+    getAuth = async (req, res, next) => {
         try {
             const { refreshToken } = req.body
             if (!refreshToken) {
@@ -103,7 +112,7 @@ class AccessController {
                     message: "refresh token not found",
                 }).send(res)
             }
-            const { code, ...results } = await AccessService.getAuth({
+            const { code, ...results } = await this.accessservice.getAuth({
                 refreshToken,
             })
             switch (code) {
@@ -128,7 +137,7 @@ class AccessController {
         }
     }
 
-    static refreshToken = async (req, res, next) => {
+    refreshToken = async (req, res, next) => {
         try {
             const refreshToken = req.headers[HEADER.REFRESHTOKEN]
             if (!refreshToken) {
@@ -136,7 +145,7 @@ class AccessController {
                     message: "Refresh token not found",
                 }).send(res)
             }
-            const { code, ...results } = await AccessService.refreshToken({
+            const { code, ...results } = await this.accessservice.refreshToken({
                 refreshToken,
             })
             switch (code) {
