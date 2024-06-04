@@ -3,18 +3,19 @@ const bcrypt = require("bcrypt")
 
 const { getInfoData } = require("../utils")
 const JWTService = require("./jwt.service")
-const {
-    findUserByUsername,
-    createUser,
-    findUserById,
-} = require("../models/repositories/user.repo")
+const UserRepository = require("../models/repositories/user.repo")
 const client = require("../db/redis.init")
 const tokenService = require("./token.service")
 
 class AccessService {
-    static login = async ({ username, password }) => {
+    constructor() {
+        this.userRepository = new UserRepository()
+    }
+    login = async ({ username, password }) => {
         try {
-            const foundUser = await findUserByUsername({ username })
+            const foundUser = await this.userRepository.findUserByUsername({
+                username,
+            })
             if (!foundUser) {
                 return {
                     code: 404,
@@ -50,7 +51,7 @@ class AccessService {
         }
     }
 
-    static logout = async ({ userId }) => {
+    logout = async ({ userId }) => {
         try {
             await tokenService.deleteByUserId({ userId })
             // using redis
@@ -63,12 +64,12 @@ class AccessService {
         }
     }
 
-    static getAuth = async ({ refreshToken }) => {
+    getAuth = async ({ refreshToken }) => {
         try {
             const { userId } = await JWTService.verifyRefreshToken(refreshToken)
 
             const accessToken = await JWTService.signAccessToken(userId)
-            const foundUser = await findUserById({ userId })
+            const foundUser = await this.userRepository.findUserById({ userId })
             if (!foundUser) {
                 return {
                     code: 404,
@@ -90,7 +91,7 @@ class AccessService {
             if (error.message === "jwt expired") {
                 return {
                     code: 401,
-                    message: "Please login",
+                    message: "Vui lòng đăng nhập",
                 }
             }
             return {
@@ -100,22 +101,24 @@ class AccessService {
         }
     }
 
-    static refreshToken = async ({ refreshToken }) => {
+    refreshToken = async ({ refreshToken }) => {
         const { userId } = await JWTService.verifyRefreshToken(refreshToken)
         const accessToken = await JWTService.signAccessToken(userId)
         const refToken = await JWTService.signRefreshToken(userId)
         return { code: 200, accessToken, refreshToken: refToken }
     }
 
-    static register = async ({ username, password, confirmPassword }) => {
+    register = async ({ username, password, confirmPassword }) => {
         try {
             if (password !== confirmPassword) {
                 return {
                     code: 400,
-                    message: "Passwords do not match",
+                    message: "Mật khẩu không khớp",
                 }
             }
-            const foundUser = await findUserByUsername({ username })
+            const foundUser = await this.userRepository.findUserByUsername({
+                username,
+            })
             if (foundUser) {
                 return {
                     code: 409,
@@ -123,7 +126,10 @@ class AccessService {
                 }
             }
             const passwordHashed = await bcrypt.hash(password, 10)
-            const newUser = await createUser({ username, passwordHashed })
+            const newUser = await this.userRepository.createUser({
+                username,
+                passwordHashed,
+            })
             if (newUser) {
                 return {
                     code: 201,

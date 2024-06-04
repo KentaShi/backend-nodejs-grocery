@@ -114,7 +114,7 @@ class ProductSerive {
             }
             return {
                 code: 404,
-                message: `Not Found product with category:${category}`,
+                message: `Not Found product with category:${cate_slug}`,
             }
         } catch (error) {
             return {
@@ -144,7 +144,9 @@ class ProductSerive {
     }
     update = async (product_id, data) => {
         try {
-            const isExists = await checkProductExists(product_id)
+            const isExists = await this.productRepository.isExistById({
+                product_id,
+            })
             if (isExists) {
                 await this.productRepository.updateById(product_id, data)
                 return {
@@ -181,11 +183,6 @@ class ProductSerive {
             }
         }
     }
-}
-
-const checkProductExists = async (product_id) => {
-    const product = await productRepository.findById({ product_id })
-    return product ? true : false
 }
 
 module.exports = ProductSerive

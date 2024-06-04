@@ -1,22 +1,24 @@
 "use strict"
 
-const USER = require("../user.model")
+const userModel = require("../user.model")
 
-const findUserByUsername = async ({
-    username,
-    select = { username: 1, password: 1, roles: 1 },
-}) => {
-    return await USER.findOne({ username }).select(select).lean()
-}
-const findUserById = async ({
-    userId,
-    select = { username: 1, password: 1, roles: 1 },
-}) => {
-    return await USER.findOne({ _id: userId }).select(select).lean()
+class UserRepository {
+    findUserByUsername = async ({
+        username,
+        select = { username: 1, password: 1, roles: 1 },
+    }) => {
+        return await userModel.findOne({ username }).select(select).lean()
+    }
+    findUserById = async ({
+        userId,
+        select = { username: 1, password: 1, roles: 1 },
+    }) => {
+        return await userModel.findOne({ _id: userId }).select(select).lean()
+    }
+
+    createUser = async ({ username, passwordHashed }) => {
+        return await userModel.create({ username, password: passwordHashed })
+    }
 }
 
-const createUser = async ({ username, passwordHashed }) => {
-    return await USER.create({ username, password: passwordHashed })
-}
-
-module.exports = { findUserByUsername, createUser, findUserById }
+module.exports = UserRepository

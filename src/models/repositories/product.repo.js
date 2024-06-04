@@ -1,18 +1,21 @@
 "use strict"
-const ProductModel = require("../product.model")
+const productModel = require("../product.model")
 
 class ProductRepository {
     findAll = async () => {
-        return await ProductModel.find().lean()
+        return await productModel.find().lean()
     }
     findById = async ({ product_id }) => {
-        return await ProductModel.findById(product_id).lean()
+        return await productModel.findById(product_id).lean()
     }
     findBySlug = async ({ slug }) => {
-        return await ProductModel.findOne({ product_slug: slug }).lean()
+        return await productModel.findOne({ product_slug: slug }).lean()
     }
     findByCate = async ({ cate_slug }) => {
-        return await ProductModel.find({ product_cate: cate_slug }).lean()
+        return await productModel.find({ product_cate: cate_slug }).lean()
+    }
+    isExistById = async ({ product_id }) => {
+        return await productModel.exists({ _id: product_id })
     }
     add = async ({
         product_name,
