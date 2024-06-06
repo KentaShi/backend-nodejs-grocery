@@ -1,18 +1,16 @@
 const { body, query } = require("express-validator")
 
 const productValidator = [
-    body("product_name", "Product Name does not empty").notEmpty(),
-    body("product_price", "Product Price must be a number").isInt({ min: 0 }),
-    body("product_cate", "Product Category does not empty").notEmpty(),
-    body("product_thumb", "Product Thumb does not empty").notEmpty(),
+    body("product_name", "Tên sản phẩm không được trống").notEmpty(),
+    body("product_price", "Giá sản phẩm phải là số").isInt({ min: 0 }),
+    body("product_cate", "Phân loại không được trống").notEmpty(),
+    body("product_thumb", "Thumbnail không được trống").notEmpty(),
 ]
 
-const categoryValidator = [
-    body("cate_name", "Cate name does not empty").notEmpty(),
-]
+const categoryValidator = [body("cate_name", "Tên không được trống").notEmpty()]
 
 const loginValidator = [
-    body("username", "Username does not empty").notEmpty(),
+    body("username", "Username không được trống").notEmpty(),
     body("password", "Password does not empty").notEmpty(),
 ]
 

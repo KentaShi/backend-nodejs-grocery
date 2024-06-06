@@ -24,7 +24,7 @@ class ProductSerive {
             }
             const product_slug = await generateUniqueProductSlug(
                 product_name,
-                productRepository
+                this.productRepository
             )
             const newProduct = await this.productRepository.add({
                 product_name,
@@ -33,24 +33,19 @@ class ProductSerive {
                 product_cate,
                 product_slug,
             })
-            if (newProduct) {
-                return {
-                    code: 200,
-                    product: getInfoData({
-                        fields: [
-                            "product_name",
-                            "product_thumb",
-                            "product_price",
-                            "product_slug",
-                            "product_cate",
-                        ],
-                        object: newProduct,
-                    }),
-                }
-            }
+
             return {
-                code: 304,
-                message: "Error creating product",
+                code: 200,
+                product: getInfoData({
+                    fields: [
+                        "product_name",
+                        "product_thumb",
+                        "product_price",
+                        "product_slug",
+                        "product_cate",
+                    ],
+                    object: newProduct,
+                }),
             }
         } catch (error) {
             return {
@@ -126,12 +121,14 @@ class ProductSerive {
 
     delete = async ({ product_id }) => {
         try {
-            const isExists = await checkProductExists(product_id)
+            const isExists = await this.productRepository.isExistById({
+                product_id,
+            })
             if (isExists) {
                 await this.productRepository.deleteById({ product_id })
                 return {
                     code: 200,
-                    message: "Delete product successfully",
+                    message: "Xóa thành công",
                 }
             }
             return { code: 404, message: "Product does not exist" }
