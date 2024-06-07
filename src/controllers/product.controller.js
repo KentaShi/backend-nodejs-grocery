@@ -57,12 +57,8 @@ class ProductController {
         switch (code) {
             case 200:
                 return new SuccessResponse({
-                    message: "Created product successfully",
+                    message: "Thêm thành công",
                     metadata: results,
-                }).send(res)
-            case 304:
-                return new NotModifiedResponse({
-                    message: results?.message,
                 }).send(res)
             default:
                 return new ErrorResponse({ message: results?.message }).send(
@@ -100,7 +96,7 @@ class ProductController {
         switch (code) {
             case 200:
                 return new SuccessResponse({
-                    message: "Delete product successfully",
+                    message: "Xóa thành công",
                     metadata: results,
                 }).send(res)
             case 404:

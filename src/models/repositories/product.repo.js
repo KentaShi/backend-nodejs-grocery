@@ -21,24 +21,27 @@ class ProductRepository {
         product_name,
         product_thumb,
         product_price,
+        product_unit,
         product_cate,
         product_slug,
     }) => {
-        return await ProductModel.create({
+        return await productModel.create({
             product_name,
             product_thumb,
             product_price,
+            product_unit,
             product_cate,
             product_slug,
         })
     }
     updateById = async (id, data) => {
-        return await ProductModel.updateOne(
+        return await productModel.updateOne(
             { _id: id },
             {
                 $set: {
                     product_name: data.product_name,
                     product_price: data.product_price,
+                    product_unit: data.product_unit,
                     product_cate: data.product_cate,
                     product_thumb: data.product_thumb,
                 },
@@ -46,14 +49,16 @@ class ProductRepository {
         )
     }
     deleteById = async ({ product_id }) => {
-        await ProductModel.deleteOne({ _id: product_id })
+        await productModel.deleteOne({ _id: product_id })
     }
     search = async (query) => {
-        return await ProductModel.find({
-            $text: {
-                $search: query,
-            },
-        }).lean()
+        return await productModel
+            .find({
+                $text: {
+                    $search: query,
+                },
+            })
+            .lean()
     }
 }
 
