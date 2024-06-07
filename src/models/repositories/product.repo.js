@@ -21,6 +21,7 @@ class ProductRepository {
         product_name,
         product_thumb,
         product_price,
+        product_unit,
         product_cate,
         product_slug,
     }) => {
@@ -28,6 +29,7 @@ class ProductRepository {
             product_name,
             product_thumb,
             product_price,
+            product_unit,
             product_cate,
             product_slug,
         })
@@ -39,6 +41,7 @@ class ProductRepository {
                 $set: {
                     product_name: data.product_name,
                     product_price: data.product_price,
+                    product_unit: data.product_unit,
                     product_cate: data.product_cate,
                     product_thumb: data.product_thumb,
                 },

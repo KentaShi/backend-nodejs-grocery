@@ -9,12 +9,18 @@ class ProductSerive {
     }
     add = async (data) => {
         try {
-            const { product_name, product_thumb, product_price, product_cate } =
-                data
+            const {
+                product_name,
+                product_thumb,
+                product_price,
+                product_unit,
+                product_cate,
+            } = data
             if (
                 !product_name ||
                 !product_thumb ||
                 !product_price ||
+                !product_unit ||
                 !product_cate
             ) {
                 return {
@@ -30,6 +36,7 @@ class ProductSerive {
                 product_name,
                 product_thumb,
                 product_price,
+                product_unit,
                 product_cate,
                 product_slug,
             })
@@ -41,6 +48,7 @@ class ProductSerive {
                         "product_name",
                         "product_thumb",
                         "product_price",
+                        "product_unit",
                         "product_slug",
                         "product_cate",
                     ],
@@ -109,7 +117,7 @@ class ProductSerive {
             }
             return {
                 code: 404,
-                message: `Not Found product with category:${cate_slug}`,
+                message: `Not Found`,
             }
         } catch (error) {
             return {

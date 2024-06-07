@@ -21,6 +21,11 @@ var productSchema = new Schema(
             type: Number,
             required: true,
         },
+        product_unit: {
+            type: String,
+            required: true,
+            default: "",
+        },
         product_cate: {
             type: String,
             required: true,
