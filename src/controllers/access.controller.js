@@ -38,12 +38,8 @@ class AccessController {
                         message: "Đăng nhập thành công",
                         metadata: results,
                     }).send(res)
-                case 404:
-                    return new NotFoundResponse({
-                        message: results?.message,
-                    }).send(res)
-                case 401:
-                    return new UnauthorizedResponse({
+                case 400:
+                    return new BadRequestResponse({
                         message: results?.message,
                     }).send(res)
                 default:

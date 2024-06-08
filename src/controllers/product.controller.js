@@ -67,25 +67,32 @@ class ProductController {
         }
     }
     updateProductById = async (req, res, next) => {
-        const { id } = req.params
-        const data = req.body
-        const { code, ...results } = await this.productService.update(id, data)
-        switch (code) {
-            case 200:
-                return new SuccessResponse({
-                    message: results?.message
-                        ? results.message
-                        : "Update product successfully",
-                    metadata: results,
-                }).send(res)
-            case 404:
-                return new NotFoundResponse({ message: results?.message }).send(
-                    res
-                )
-            default:
-                return new ErrorResponse({ message: results?.message }).send(
-                    res
-                )
+        try {
+            const { id } = req.params
+            const data = req.body
+            const { code, ...results } = await this.productService.update(
+                id,
+                data
+            )
+            switch (code) {
+                case 200:
+                    return new SuccessResponse({
+                        message: results?.message
+                            ? results.message
+                            : "Update product successfully",
+                        metadata: results,
+                    }).send(res)
+                case 404:
+                    return new NotFoundResponse({
+                        message: results?.message,
+                    }).send(res)
+                default:
+                    return new ErrorResponse({
+                        message: results?.message,
+                    }).send(res)
+            }
+        } catch (error) {
+            next(error)
         }
     }
     deleteProductById = async (req, res, next) => {

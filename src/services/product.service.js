@@ -3,6 +3,10 @@
 const { generateUniqueProductSlug, getInfoData } = require("../utils")
 
 const ProductRepository = require("../models/repositories/product.repo")
+const {
+    BadRequestResponse,
+    ErrorResponse,
+} = require("../response/error.response")
 class ProductSerive {
     constructor() {
         this.productRepository = new ProductRepository()
@@ -161,11 +165,8 @@ class ProductSerive {
             }
             return { code: 404, message: "Product does not exist" }
         } catch (error) {
-            console.log(error)
-            return {
-                code: 500,
-                message: error.message,
-            }
+            console.log(error.message)
+            throw new Error(error.message)
         }
     }
     searchProducts = async (query) => {
@@ -182,10 +183,8 @@ class ProductSerive {
                 message: `Not Found product with query ${query}`,
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            console.log(error)
+            throw new ErrorResponse({ message: error.message })
         }
     }
 }

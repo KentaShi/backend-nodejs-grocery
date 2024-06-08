@@ -1,14 +1,17 @@
 "use strict"
 
 const asyncHandler = require("../helpers/asyncHandler")
-const { UnauthorizedResponse } = require("../response/error.response")
+const {
+    UnauthorizedResponse,
+    BadRequestResponse,
+} = require("../response/error.response")
 const JWT = require("jsonwebtoken")
 const { verifyRefreshToken } = require("../services/jwt.service")
 const HEADER = require("../constants/header.constant")
 
 const verifyAccessToken = async (req, res, next) => {
     if (!req.headers["authorization"]) {
-        return new UnauthorizedResponse({ message: "Unauthorized" }).send(res)
+        return new BadRequestResponse({ message: "Unauthorized" }).send(res)
     }
     const authHeader = req.headers["authorization"]
     const token = authHeader.split(" ")[1]
@@ -30,12 +33,12 @@ const verifyAccessToken = async (req, res, next) => {
 
 const authenticate = asyncHandler(async (req, res, next) => {
     if (!req.headers[HEADER.AUTHORIZATION]) {
-        return new UnauthorizedResponse({
+        return new BadRequestResponse({
             message: "Invalid access token",
         }).send(res)
     }
     if (!req.headers[HEADER.REFRESHTOKEN]) {
-        return new UnauthorizedResponse({
+        return new BadRequestResponse({
             message: "Invalid refresh token!",
         }).send(res)
     }

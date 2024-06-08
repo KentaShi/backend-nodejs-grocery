@@ -18,7 +18,7 @@ class AccessService {
             })
             if (!foundUser) {
                 return {
-                    code: 404,
+                    code: 400,
                     message: "Username hoặc mật khẩu không đúng",
                 }
             }
@@ -26,7 +26,7 @@ class AccessService {
             const match = await bcrypt.compare(password, foundUser.password)
             if (!match) {
                 return {
-                    code: 401,
+                    code: 400,
                     message: "Username hoặc password không đúng",
                 }
             }

@@ -11,19 +11,17 @@ const categoryValidator = [body("cate_name", "Tên không được trống").not
 
 const loginValidator = [
     body("username", "Username không được trống").notEmpty(),
-    body("password", "Password does not empty").notEmpty(),
+    body("password", "Password không được trống").notEmpty(),
 ]
 
 const registerValidator = [
-    body("username", "Username is required").notEmpty(),
-    body("password", "Password must be at least 4 characters").isLength({
+    body("username", "Username không được trống").notEmpty(),
+    body("password", "Password ít nhất 4 ký tự").isLength({
         min: 4,
     }),
-    body("confirmPassword", "Passwords do not match!").custom(
-        (value, { req }) => {
-            return value === req.body.password
-        }
-    ),
+    body("confirmPassword", "Password không khớp!").custom((value, { req }) => {
+        return value === req.body.password
+    }),
 ]
 
 const searchValidator = [query("q", "Text search is empty!").notEmpty()]
