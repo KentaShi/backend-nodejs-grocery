@@ -5,6 +5,7 @@ const ProductRepository = require("../models/repositories/product.repo")
 const {
     NotFoundResponse,
     BadRequestResponse,
+    ErrorResponse,
 } = require("../response/error.response")
 const { generateCategorySlug } = require("../utils")
 
@@ -34,7 +35,7 @@ class CategoryService {
                 category: category,
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new ErrorResponse({ message: error.message })
         }
     }
     findAll = async () => {
@@ -51,7 +52,7 @@ class CategoryService {
                 message: "No category found",
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new ErrorResponse({ message: error.message })
         }
     }
     getCountOfProductsByCateSlug = async ({ cate_slug }) => {
@@ -64,7 +65,7 @@ class CategoryService {
                 count: products.length,
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new ErrorResponse({ message: error.message })
         }
     }
     deleteOne = async ({ cate_id }) => {
@@ -86,7 +87,7 @@ class CategoryService {
             await this.categoryRepository.deleteById({ cate_id })
             return { code: 200, message: "Xóa thành công" }
         } catch (error) {
-            throw new Error(error.message)
+            throw new ErrorResponse({ message: error.message })
         }
     }
 }

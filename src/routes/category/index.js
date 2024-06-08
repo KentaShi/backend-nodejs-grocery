@@ -5,7 +5,11 @@ const categoryController = require("../../controllers/category.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
 const { validate } = require("../../middlewares/validate")
 const { categoryValidator } = require("../../helpers/validator")
+const { authenticate } = require("../../middlewares/auth")
 const router = express.Router()
+
+//authenticate
+router.use(authenticate)
 
 //get all categories
 router.get("/all", asyncHandler(categoryController.findAllCategories))

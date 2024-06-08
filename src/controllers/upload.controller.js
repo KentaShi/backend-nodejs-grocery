@@ -12,7 +12,7 @@ class UploadController {
         try {
             const { file } = req
             if (!file) {
-                return new BadRequestResponse({ message: "File missing" })
+                throw new BadRequestResponse({ message: "File missing" })
             }
 
             const { code, ...results } =
@@ -24,7 +24,7 @@ class UploadController {
                 }).send(res)
             }
 
-            return new ErrorResponse({ message: results?.message }).send(res)
+            throw new ErrorResponse({ message: results?.message })
         } catch (error) {
             next(error)
         }

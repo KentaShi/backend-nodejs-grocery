@@ -27,6 +27,7 @@ app.use(cookieParser())
 
 //init mongoose db cloud
 const { connectDB } = require("./db/mongodbCloud.init")
+const { ErrorResponse } = require("./response/error.response")
 connectDB()
 
 //init redis
@@ -44,11 +45,15 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
     const statusCode = error.status || 500
-    return res.status(statusCode).json({
-        status: "Error!!!",
-        code: statusCode,
+    return new ErrorResponse({
         message: error.message || "Internal Server Error",
-    })
+        status: statusCode,
+    }).send(res)
+    // return res.status(statusCode).json({
+    //     status: "Error!!!",
+    //     code: statusCode,
+    //     message: error.message || "Internal Server Error",
+    // })
 })
 
 const server = http.createServer(app)
