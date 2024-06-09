@@ -6,6 +6,7 @@ const {
     UnauthorizedResponse,
 } = require("../response/error.response")
 const TokenService = require("./token.service")
+const { UnauthorizedError } = require("../errors/app.error")
 
 class JWTService {
     static signAccessToken = async (userId) => {
@@ -13,7 +14,7 @@ class JWTService {
             const payload = { userId }
             const secret = process.env.ACCESS_TOKEN_SECRET
             const options = {
-                expiresIn: "1h",
+                expiresIn: "1m",
             }
 
             JWT.sign(payload, secret, options, (err, res) => {
@@ -79,11 +80,7 @@ class JWTService {
                     if (refreshToken === userToken.refreshToken) {
                         resolve(payload)
                     }
-                    reject(
-                        new UnauthorizedResponse({
-                            message: "Invalid refresh token",
-                        })
-                    )
+                    reject(new UnauthorizedError("invalid refresh token"))
                     // using redis
                     // client.get(payload.userId, (err, reply) => {
                     //     if (err) return reject(err)

@@ -1,5 +1,6 @@
 "use strict"
 
+const { NotFoundError, AppError } = require("../errors/app.error")
 const {
     NotFoundResponse,
     ErrorResponse,
@@ -32,24 +33,25 @@ class ProductController {
     }
     fetchProductById = async (req, res, next) => {}
     fetchProductByCategory = async (req, res, next) => {
-        const { cat } = req.params
-        const { code, ...results } = await this.productService.findByCategory({
-            cate_slug: cat,
-        })
-        switch (code) {
-            case 200:
-                return new SuccessResponse({
-                    message: `Found products by ${cat}`,
-                    metadata: results,
-                }).send(res)
-            case 304:
-                return new NotModifiedResponse({
-                    message: results?.message,
-                }).send(res)
-            default:
-                return new ErrorResponse({ message: results?.message }).send(
-                    res
-                )
+        try {
+            const { cat } = req.params
+            const { code, ...results } =
+                await this.productService.findByCategory({
+                    cate_slug: cat,
+                })
+            switch (code) {
+                case 200:
+                    return new SuccessResponse({
+                        message: "success",
+                        metadata: results,
+                    }).send(res)
+                case 404:
+                    throw new NotFoundError()
+                default:
+                    throw new AppError()
+            }
+        } catch (error) {
+            next(error)
         }
     }
     addNewProduct = async (req, res, next) => {
@@ -124,17 +126,13 @@ class ProductController {
             switch (code) {
                 case 200:
                     return new SuccessResponse({
-                        message: "Found products",
+                        message: "success",
                         metadata: results,
                     }).send(res)
                 case 404:
-                    return new NotFoundResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new NotFoundError()
                 default:
-                    return new ErrorResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new AppError()
             }
         } catch (error) {
             next(error)
