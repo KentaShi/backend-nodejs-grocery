@@ -25,13 +25,11 @@ class CategoryController {
                         metadata: results,
                     }).send(res)
                 case 409:
-                    return new ConflictResponse({
+                    throw new ConflictResponse({
                         message: "Đã có phân loại này",
-                    }).send(res)
+                    })
                 default:
-                    return new ErrorResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new ErrorResponse()
             }
         } catch (error) {
             next(error)

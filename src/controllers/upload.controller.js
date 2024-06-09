@@ -1,5 +1,6 @@
 "use strict"
 
+const { BadRequestError, AppError } = require("../errors/app.error")
 const {
     BadRequestResponse,
     ErrorResponse,
@@ -12,7 +13,7 @@ class UploadController {
         try {
             const { file } = req
             if (!file) {
-                throw new BadRequestResponse({ message: "File missing" })
+                throw new BadRequestError("Missing upload file")
             }
 
             const { code, ...results } =
@@ -24,7 +25,7 @@ class UploadController {
                 }).send(res)
             }
 
-            throw new ErrorResponse({ message: results?.message })
+            throw new AppError()
         } catch (error) {
             next(error)
         }

@@ -7,6 +7,10 @@ const cors = require("cors")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const app = express()
+
+const { AppError } = require("./errors/app.error")
+const errorHandler = require("./middlewares/errorHandler")
+
 require("dotenv").config()
 
 // init middleware
@@ -27,7 +31,7 @@ app.use(cookieParser())
 
 //init mongoose db cloud
 const { connectDB } = require("./db/mongodbCloud.init")
-const { ErrorResponse } = require("./response/error.response")
+
 connectDB()
 
 //init redis
@@ -37,24 +41,18 @@ connectDB()
 app.use("", require("./routes"))
 
 // error handlers
-app.use((req, res, next) => {
-    const error = new Error("404 Not Found")
-    error.status = 404
-    next(error)
+// handle 404 errors
+app.all("*", (req, res, next) => {
+    next(
+        new AppError({
+            message: `Can't find ${req.originalUrl} on this server!`,
+            statusCode: 404,
+        })
+    )
 })
 
-app.use((error, req, res, next) => {
-    const statusCode = error.status || 500
-    return new ErrorResponse({
-        message: error.message || "Internal Server Error",
-        status: statusCode,
-    }).send(res)
-    // return res.status(statusCode).json({
-    //     status: "Error!!!",
-    //     code: statusCode,
-    //     message: error.message || "Internal Server Error",
-    // })
-})
+// Global error handling middleware
+app.use(errorHandler)
 
 const server = http.createServer(app)
 const io = socketIo(server, {

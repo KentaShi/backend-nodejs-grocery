@@ -1,12 +1,10 @@
 const { validationResult } = require("express-validator")
-const { BadRequestResponse } = require("../response/error.response")
+const { BadRequestError } = require("../errors/app.error")
 
 const validate = (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        return new BadRequestResponse({ message: errors.array()[0].msg }).send(
-            res
-        )
+        next(new BadRequestError(errors.array()[0].msg))
         //return res.status(400).json({ errors: errors.array() })
     }
     next()

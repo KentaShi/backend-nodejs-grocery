@@ -6,6 +6,7 @@ const JWTService = require("./jwt.service")
 const UserRepository = require("../models/repositories/user.repo")
 const client = require("../db/redis.init")
 const tokenService = require("./token.service")
+const { AppError, UnauthorizedError } = require("../errors/app.error")
 
 class AccessService {
     constructor() {
@@ -19,7 +20,6 @@ class AccessService {
             if (!foundUser) {
                 return {
                     code: 400,
-                    message: "Username hoặc mật khẩu không đúng",
                 }
             }
 
@@ -27,7 +27,6 @@ class AccessService {
             if (!match) {
                 return {
                     code: 400,
-                    message: "Username hoặc password không đúng",
                 }
             }
             const accessToken = await JWTService.signAccessToken(foundUser._id)
@@ -47,7 +46,7 @@ class AccessService {
                 },
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new AppError(error.message)
         }
     }
 
@@ -60,7 +59,7 @@ class AccessService {
                 code: 200,
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new AppError(error.message)
         }
     }
 
@@ -73,7 +72,6 @@ class AccessService {
             if (!foundUser) {
                 return {
                     code: 404,
-                    message: "User not found",
                 }
             }
             return {
@@ -87,25 +85,22 @@ class AccessService {
                 },
             }
         } catch (error) {
-            console.log(error.message)
             if (error.message === "jwt expired") {
-                return {
-                    code: 401,
-                    message: "Vui lòng đăng nhập",
-                }
+                throw new UnauthorizedError(error.message)
             }
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new AppError(error.message)
         }
     }
 
     refreshToken = async ({ refreshToken }) => {
-        const { userId } = await JWTService.verifyRefreshToken(refreshToken)
-        const accessToken = await JWTService.signAccessToken(userId)
-        const refToken = await JWTService.signRefreshToken(userId)
-        return { code: 200, accessToken, refreshToken: refToken }
+        try {
+            const { userId } = await JWTService.verifyRefreshToken(refreshToken)
+            const accessToken = await JWTService.signAccessToken(userId)
+            const refToken = await JWTService.signRefreshToken(userId)
+            return { code: 200, accessToken, refreshToken: refToken }
+        } catch (error) {
+            throw new AppError(error.message)
+        }
     }
 
     register = async ({ username, password, confirmPassword }) => {
@@ -113,7 +108,6 @@ class AccessService {
             if (password !== confirmPassword) {
                 return {
                     code: 400,
-                    message: "Mật khẩu không khớp",
                 }
             }
             const foundUser = await this.userRepository.findUserByUsername({
@@ -122,7 +116,6 @@ class AccessService {
             if (foundUser) {
                 return {
                     code: 409,
-                    message: "Username đã tồn tại",
                 }
             }
             const passwordHashed = await bcrypt.hash(password, 10)
@@ -140,7 +133,7 @@ class AccessService {
                 }
             }
         } catch (error) {
-            throw new Error(error.message)
+            throw new AppError(error.message)
         }
     }
 }

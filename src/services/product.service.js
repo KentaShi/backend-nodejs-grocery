@@ -7,6 +7,7 @@ const {
     BadRequestResponse,
     ErrorResponse,
 } = require("../response/error.response")
+const { AppError } = require("../errors/app.error")
 class ProductSerive {
     constructor() {
         this.productRepository = new ProductRepository()
@@ -121,13 +122,9 @@ class ProductSerive {
             }
             return {
                 code: 404,
-                message: `Not Found`,
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new AppError(error.message)
         }
     }
 
@@ -180,11 +177,9 @@ class ProductSerive {
             }
             return {
                 code: 404,
-                message: `Not Found product with query ${query}`,
             }
         } catch (error) {
-            console.log(error)
-            throw new ErrorResponse({ message: error.message })
+            throw new AppError()
         }
     }
 }

@@ -2,6 +2,12 @@
 
 const HEADER = require("../constants/header.constant")
 const {
+    BadRequestError,
+    AppError,
+    NotFoundError,
+    ConflictError,
+} = require("../errors/app.error")
+const {
     ErrorResponse,
     NotFoundResponse,
     UnauthorizedResponse,
@@ -35,17 +41,13 @@ class AccessController {
                     //     secure: true,
                     // })
                     return new SuccessResponse({
-                        message: "Đăng nhập thành công",
+                        message: "success",
                         metadata: results,
                     }).send(res)
                 case 400:
-                    return new BadRequestResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new BadRequestError()
                 default:
-                    return new ErrorResponse({ message: "Login failed" }).send(
-                        res
-                    )
+                    throw new AppError()
             }
         } catch (error) {
             next(error)
@@ -66,7 +68,7 @@ class AccessController {
                         metadata: results,
                     }).send(res)
                 default:
-                    return new ErrorResponse().send(res)
+                    throw new AppError()
             }
         } catch (error) {
             next(error)
@@ -81,19 +83,15 @@ class AccessController {
             switch (code) {
                 case 201:
                     return new SuccessResponse({
-                        message: "Đăng ký thành công",
+                        message: "success",
                         metadata: results,
                     }).send(res)
                 case 409:
-                    return new ConflictResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new ConflictError()
                 case 400:
-                    return new BadRequestResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new BadRequestError()
                 default:
-                    return new ErrorResponse().send(res)
+                    throw new AppError()
             }
         } catch (error) {
             next(error)
@@ -104,9 +102,7 @@ class AccessController {
         try {
             const { refreshToken } = req.body
             if (!refreshToken) {
-                return new NotFoundResponse({
-                    message: "refresh token not found",
-                }).send(res)
+                throw new NotFoundError("refresh token not found")
             }
             const { code, ...results } = await this.accessservice.getAuth({
                 refreshToken,
@@ -114,19 +110,12 @@ class AccessController {
             switch (code) {
                 case 200:
                     return new SuccessResponse({
-                        message: "Welcome back",
                         metadata: results,
                     }).send(res)
                 case 404:
-                    return new NotFoundResponse({
-                        message: results?.message,
-                    }).send(res)
-                case 401:
-                    return new UnauthorizedResponse({
-                        message: results?.message,
-                    }).send(res)
+                    throw new NotFoundError()
                 default:
-                    return new ErrorResponse().send(res)
+                    throw new AppError()
             }
         } catch (error) {
             next(error)
@@ -137,9 +126,7 @@ class AccessController {
         try {
             const refreshToken = req.headers[HEADER.REFRESHTOKEN]
             if (!refreshToken) {
-                return new NotFoundResponse({
-                    message: "Refresh token not found",
-                }).send(res)
+                throw new NotFoundError("refresh token not found")
             }
             const { code, ...results } = await this.accessservice.refreshToken({
                 refreshToken,
@@ -147,11 +134,10 @@ class AccessController {
             switch (code) {
                 case 200:
                     return new SuccessResponse({
-                        message: "Refresh token successful",
                         metadata: results,
                     }).send(res)
                 default:
-                    return new ErrorResponse().send(res)
+                    throw new AppError()
             }
         } catch (error) {
             next(error)

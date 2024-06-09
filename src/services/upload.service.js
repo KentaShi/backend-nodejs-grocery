@@ -1,6 +1,7 @@
 "use strict"
 
 const cloudinary = require("../config/cloudinary.config")
+const { AppError } = require("../errors/app.error")
 
 class UploadService {
     uploadImageFromsLocal = async ({ path }) => {
@@ -9,7 +10,6 @@ class UploadService {
                 // public_id: "thumb",
                 folder: "taphoachituyet",
             })
-            console.log(result)
             return {
                 code: 200,
                 image_url: result.secure_url,
@@ -20,10 +20,7 @@ class UploadService {
                 }),
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            throw new AppError(error.message)
         }
     }
 }
