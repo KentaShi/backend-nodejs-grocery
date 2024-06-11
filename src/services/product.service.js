@@ -21,18 +21,7 @@ class ProductSerive {
                 product_unit,
                 product_cate,
             } = data
-            if (
-                !product_name ||
-                !product_thumb ||
-                !product_price ||
-                !product_unit ||
-                !product_cate
-            ) {
-                return {
-                    code: 304,
-                    message: "Please fill all required fields",
-                }
-            }
+
             const product_slug = await generateUniqueProductSlug(
                 product_name,
                 this.productRepository
@@ -61,30 +50,18 @@ class ProductSerive {
                 }),
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            return { error }
         }
     }
     findAll = async () => {
         try {
             const products = await this.productRepository.findAll()
-            if (products.length > 0) {
-                return {
-                    code: 200,
-                    products,
-                }
-            }
             return {
-                code: 404,
-                message: "List of products is empty",
+                code: 200,
+                products,
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            return { error }
         }
     }
     findById = async ({ product_id }) => {
@@ -95,7 +72,6 @@ class ProductSerive {
             if (!product) {
                 return {
                     code: 404,
-                    message: "Product not found",
                 }
             }
             return {
@@ -103,10 +79,7 @@ class ProductSerive {
                 product,
             }
         } catch (error) {
-            return {
-                code: 500,
-                message: error.message,
-            }
+            return { error }
         }
     }
     findByCategory = async ({ cate_slug }) => {
@@ -114,17 +87,12 @@ class ProductSerive {
             const products = await this.productRepository.findByCate({
                 cate_slug,
             })
-            if (products.length > 0) {
-                return {
-                    code: 200,
-                    products,
-                }
-            }
             return {
-                code: 404,
+                code: 200,
+                products,
             }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 
@@ -133,19 +101,15 @@ class ProductSerive {
             const isExists = await this.productRepository.isExistById({
                 product_id,
             })
-            if (isExists) {
-                await this.productRepository.deleteById({ product_id })
-                return {
-                    code: 200,
-                    message: "Xóa thành công",
-                }
-            }
-            return { code: 404, message: "Product does not exist" }
-        } catch (error) {
+            if (!isExists) return { code: 404 }
+
+            await this.productRepository.deleteById({ product_id })
+
             return {
-                code: 500,
-                message: error.message,
+                code: 200,
             }
+        } catch (error) {
+            return { error }
         }
     }
     update = async (product_id, data) => {
@@ -153,33 +117,26 @@ class ProductSerive {
             const isExists = await this.productRepository.isExistById({
                 product_id,
             })
-            if (isExists) {
-                await this.productRepository.updateById(product_id, data)
-                return {
-                    code: 200,
-                    message: "Update product successfully.",
-                }
+            if (!isExists) return { code: 404 }
+
+            await this.productRepository.updateById(product_id, data)
+            return {
+                code: 200,
             }
-            return { code: 404, message: "Product does not exist" }
         } catch (error) {
-            console.log(error.message)
-            throw new Error(error.message)
+            return { error }
         }
     }
     searchProducts = async (query) => {
         try {
             const products = await this.productRepository.search(query)
-            if (products.length > 0) {
-                return {
-                    code: 200,
-                    products,
-                }
-            }
+
             return {
-                code: 404,
+                code: 200,
+                products,
             }
         } catch (error) {
-            throw new AppError()
+            return { error }
         }
     }
 }

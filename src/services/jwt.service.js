@@ -1,10 +1,7 @@
 "use strict"
 const JWT = require("jsonwebtoken")
 const client = require("../db/redis.init")
-const {
-    AuthFailureError,
-    UnauthorizedResponse,
-} = require("../response/error.response")
+
 const TokenService = require("./token.service")
 const { UnauthorizedError } = require("../errors/app.error")
 
