@@ -35,7 +35,7 @@ class CategoryService {
                 category: category,
             }
         } catch (error) {
-            throw new ErrorResponse({ message: error.message })
+            return { error }
         }
     }
     findAll = async () => {
@@ -49,10 +49,9 @@ class CategoryService {
             }
             return {
                 code: 404,
-                message: "No category found",
             }
         } catch (error) {
-            throw new ErrorResponse({ message: error.message })
+            return { error }
         }
     }
     getCountOfProductsByCateSlug = async ({ cate_slug }) => {
@@ -65,14 +64,14 @@ class CategoryService {
                 count: products.length,
             }
         } catch (error) {
-            throw new ErrorResponse({ message: error.message })
+            return { error }
         }
     }
     deleteOne = async ({ cate_id }) => {
         try {
             const foundCate = await this.categoryRepository.findOne({ cate_id })
             if (!foundCate) {
-                return { code: 404, message: "Not Found category" }
+                return { code: 404 }
             }
             const { cate_slug } = foundCate
             const products = await this.productRepository.findByCate({
@@ -85,9 +84,9 @@ class CategoryService {
                 }
             }
             await this.categoryRepository.deleteById({ cate_id })
-            return { code: 200, message: "Xóa thành công" }
+            return { code: 200 }
         } catch (error) {
-            throw new ErrorResponse({ message: error.message })
+            return { error }
         }
     }
 }

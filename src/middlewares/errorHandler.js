@@ -30,9 +30,9 @@ module.exports = (error, req, res, next) => {
     error.status = error.status || "error"
     error.message = error.message || "Internal Server Error"
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === "dev") {
         sendErrorDev(error, req, res)
-    } else if (process.env.NODE_ENV === "production") {
+    } else if (process.env.NODE_ENV === "prod") {
         sendErrorProd(error, req, res)
     }
 }

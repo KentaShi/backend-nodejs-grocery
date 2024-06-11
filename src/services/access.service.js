@@ -46,7 +46,7 @@ class AccessService {
                 },
             }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 
@@ -59,7 +59,7 @@ class AccessService {
                 code: 200,
             }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 
@@ -85,10 +85,11 @@ class AccessService {
                 },
             }
         } catch (error) {
-            if (error.message === "jwt expired") {
-                throw new UnauthorizedError(error.message)
-            }
-            throw new AppError(error.message)
+            return { error }
+            // if (error.message === "jwt expired") {
+            //     throw new UnauthorizedError(error.message)
+            // }
+            // throw new AppError(error.message)
         }
     }
 
@@ -99,7 +100,7 @@ class AccessService {
             const refToken = await JWTService.signRefreshToken(userId)
             return { code: 200, accessToken, refreshToken: refToken }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 
@@ -133,7 +134,7 @@ class AccessService {
                 }
             }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 }

@@ -1,11 +1,11 @@
 "use strict"
 
 const {
-    ErrorResponse,
-    NotFoundResponse,
-    ConflictResponse,
-    BadRequestResponse,
-} = require("../response/error.response")
+    AppError,
+    ConflictError,
+    NotFoundError,
+    BadRequestError,
+} = require("../errors/app.error")
 const { SuccessResponse } = require("../response/success.response")
 const CategoryService = require("../services/category.service")
 
@@ -15,9 +15,9 @@ class CategoryController {
     }
     addNewCate = async (req, res, next) => {
         try {
-            const { code, ...results } = await this.categoryService.create(
-                req.body
-            )
+            const { code, error, ...results } =
+                await this.categoryService.create(req.body)
+            if (error) return next(error)
             switch (code) {
                 case 200:
                     return new SuccessResponse({
@@ -25,11 +25,9 @@ class CategoryController {
                         metadata: results,
                     }).send(res)
                 case 409:
-                    throw new ConflictResponse({
-                        message: "Đã có phân loại này",
-                    })
+                    return next(new ConflictError("conflict"))
                 default:
-                    throw new ErrorResponse()
+                    return next(new AppError())
             }
         } catch (error) {
             next(error)
@@ -38,9 +36,10 @@ class CategoryController {
     deleteCateById = async (req, res, next) => {
         try {
             const { id } = req.params
-            const { code, message } = await this.categoryService.deleteOne({
+            const { code, error } = await this.categoryService.deleteOne({
                 cate_id: id,
             })
+            if (error) return next(error)
             switch (code) {
                 case 200:
                     return new SuccessResponse({
@@ -48,13 +47,11 @@ class CategoryController {
                         metadata: null,
                     }).send(res)
                 case 404:
-                    return new NotFoundResponse({
-                        message: message,
-                    }).send(res)
+                    return next(new NotFoundError())
                 case 400:
-                    return new BadRequestResponse({
-                        message: message,
-                    }).send(res)
+                    return next(new BadRequestError())
+                default:
+                    return next(new AppError())
             }
         } catch (error) {
             next(error)
@@ -62,37 +59,41 @@ class CategoryController {
     }
 
     findAllCategories = async (req, res, next) => {
-        const { code, ...results } = await this.categoryService.findAll()
-        switch (code) {
-            case 200:
-                return new SuccessResponse({
-                    message: `Found categories`,
-                    metadata: results,
-                }).send(res)
-            case 404:
-                return new NotFoundResponse({
-                    message: results?.message,
-                }).send(res)
-            default:
-                return new ErrorResponse({
-                    message: results?.message,
-                }).send(res)
+        try {
+            const { code, error, ...results } =
+                await this.categoryService.findAll()
+            if (error) return next(error)
+            switch (code) {
+                case 200:
+                    return new SuccessResponse({
+                        message: "success",
+                        metadata: results,
+                    }).send(res)
+                case 404:
+                    return next(new NotFoundError())
+                default:
+                    return next(new AppError())
+            }
+        } catch (error) {
+            next(error)
         }
     }
     getCountOfProductsByCate = async (req, res, next) => {
         try {
             const { cate_slug } = req.params
-            const { code, count } =
+            const { code, error, count } =
                 await this.categoryService.getCountOfProductsByCateSlug({
                     cate_slug,
                 })
+
+            if (error) return next(error)
             if (code === 200) {
                 return new SuccessResponse({
-                    message: "",
+                    message: "success",
                     metadata: { count },
                 }).send(res)
             }
-            throw new Error("Couldn't get count of products")
+            return next(new AppError())
         } catch (error) {
             next(error)
         }
