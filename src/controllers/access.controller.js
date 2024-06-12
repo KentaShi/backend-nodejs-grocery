@@ -97,7 +97,7 @@ class AccessController {
                         metadata: results,
                     }).send(res)
                 case 409:
-                    throw new ConflictError()
+                    return next(new ConflictError())
                 case 400:
                     return next(new BadRequestError())
                 default:

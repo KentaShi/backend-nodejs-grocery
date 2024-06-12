@@ -20,7 +20,7 @@ class UploadService {
                 }),
             }
         } catch (error) {
-            throw new AppError(error.message)
+            return { error }
         }
     }
 }

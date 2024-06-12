@@ -3,11 +3,6 @@
 const { generateUniqueProductSlug, getInfoData } = require("../utils")
 
 const ProductRepository = require("../models/repositories/product.repo")
-const {
-    BadRequestResponse,
-    ErrorResponse,
-} = require("../response/error.response")
-const { AppError } = require("../errors/app.error")
 class ProductSerive {
     constructor() {
         this.productRepository = new ProductRepository()
