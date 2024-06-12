@@ -80,7 +80,6 @@ class CategoryService {
             if (products.length > 0) {
                 return {
                     code: 400,
-                    message: "Có sản phẩm thuộc phân loại này, không thể xóa",
                 }
             }
             await this.categoryRepository.deleteById({ cate_id })

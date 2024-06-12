@@ -13,19 +13,17 @@ class UploadController {
         try {
             const { file } = req
             if (!file) {
-                throw new BadRequestError("Missing upload file")
+                return next(new BadRequestError("Missing upload file"))
             }
 
-            const { code, ...results } =
+            const { code, error, ...results } =
                 await UploadService.uploadImageFromsLocal({ path: file.path })
-            if (code === 200) {
-                return new SuccessResponse({
-                    message: "Uploaded file successfully",
-                    metadata: results,
-                }).send(res)
-            }
+            if (error) return next(error)
 
-            throw new AppError()
+            return new SuccessResponse({
+                message: "success",
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
