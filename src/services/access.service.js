@@ -14,8 +14,10 @@ class AccessService {
     }
     login = async ({ username, password }) => {
         try {
+            const select = { username: 1, password: 1, roles: 1 }
             const foundUser = await this.userRepository.findUserByUsername({
                 username,
+                select,
             })
             if (!foundUser) {
                 return {
@@ -29,10 +31,8 @@ class AccessService {
                     code: 400,
                 }
             }
-            const accessToken = await JWTService.signAccessToken(foundUser._id)
-            const refreshToken = await JWTService.signRefreshToken(
-                foundUser._id
-            )
+            const accessToken = await JWTService.signAccessToken(foundUser)
+            const refreshToken = await JWTService.signRefreshToken(foundUser)
 
             return {
                 code: 200,
