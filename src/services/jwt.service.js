@@ -6,9 +6,8 @@ const TokenService = require("./token.service")
 const { UnauthorizedError } = require("../errors/app.error")
 
 class JWTService {
-    static signAccessToken = async (userId) => {
+    static signAccessToken = async (payload) => {
         return new Promise((resolve, reject) => {
-            const payload = { userId }
             const secret = process.env.ACCESS_TOKEN_SECRET
             const options = {
                 expiresIn: "1d",
@@ -21,9 +20,8 @@ class JWTService {
         })
     }
 
-    static signRefreshToken = async (userId) => {
+    static signRefreshToken = async (payload) => {
         return new Promise((resolve, reject) => {
-            const payload = { userId }
             const secret = process.env.REFRESH_TOKEN_SECRET
             const options = {
                 expiresIn: "30d",
@@ -32,17 +30,17 @@ class JWTService {
             JWT.sign(payload, secret, options, async (err, token) => {
                 if (err) reject(err)
                 const foundUserToken = await TokenService.findByUserId({
-                    userId,
+                    userId: payload._id,
                 })
                 let userToken
                 if (foundUserToken) {
                     userToken = await TokenService.updateByUserId({
-                        userId,
+                        userId: payload._id,
                         refreshToken: token,
                     })
                 } else {
                     userToken = await TokenService.create({
-                        userId,
+                        userId: payload._id,
                         refreshToken: token,
                     })
                 }
