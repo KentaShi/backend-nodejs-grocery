@@ -3,9 +3,16 @@
 const asyncHandler = require("../helpers/asyncHandler")
 
 const JWT = require("jsonwebtoken")
-const { verifyRefreshToken } = require("../services/jwt.service")
+const JWTService = require("../services/jwt.service")
+const TokenService = require("../services/token.service")
 const HEADER = require("../constants/header.constant")
-const { BadRequestError, UnauthorizedError } = require("../errors/app.error")
+const {
+    BadRequestError,
+    UnauthorizedError,
+} = require("../core/errors/app.error")
+
+const jwtService = new JWTService()
+const tokenService = new TokenService()
 
 const verifyAccessToken = async (req, res, next) => {
     if (!req.headers["authorization"]) {
@@ -32,22 +39,46 @@ const authenticate = asyncHandler(async (req, res, next) => {
     if (!req.headers[HEADER.REFRESHTOKEN]) {
         next(new BadRequestError("Invalid refresh token"))
     }
-    const rtoken = req.headers[HEADER.REFRESHTOKEN]
-    await verifyRefreshToken(rtoken)
 
     const authHeader = req.headers[HEADER.AUTHORIZATION]
     const accessToken = authHeader.split(" ")[1]
-    JWT.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-        if (err) {
-            if (err.message === "jwt expired") {
-                next(new UnauthorizedError(err.message))
-            }
-            next(new BadRequestError(err.message))
+    const rtoken = req.headers[HEADER.REFRESHTOKEN]
+
+    try {
+        const payload = await jwtService.verifyRefreshToken(rtoken)
+        const { user } = payload
+        const foundToken = await tokenService.findByUserId({
+            userId: user.userId,
+        })
+        if (rtoken === foundToken.refreshToken) {
+            jwtService
+                .verifyAccessToken(accessToken)
+                .then((decoded) => {
+                    req.user = decoded.user
+                    req.refreshToken = rtoken
+                    next()
+                })
+                .catch((err) => {
+                    throw err
+                })
+        } else {
+            throw new BadRequestError("Invalid refresh token")
         }
-        req.payload = payload
-        req.refreshToken = rtoken
-        next()
-    })
+    } catch (error) {
+        next(error)
+    }
+
+    // JWT.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+    //     if (err) {
+    //         if (err.message === "jwt expired") {
+    //             next(new UnauthorizedError(err.message))
+    //         }
+    //         next(new BadRequestError(err.message))
+    //     }
+    //     req.payload = payload
+    //     req.refreshToken = rtoken
+    //     next()
+    // })
 })
 
 module.exports = { verifyAccessToken, authenticate }

@@ -8,6 +8,8 @@ const { productValidator, searchValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 
+const productController = new ProductController()
+
 router.use(authenticate)
 
 //search
@@ -15,27 +17,27 @@ router.get(
     "/search",
     searchValidator,
     validate,
-    asyncHandler(ProductController.searchProduct)
+    asyncHandler(productController.searchProduct)
 )
 
 //fetch all products
-router.get("/all", asyncHandler(ProductController.fetchAllProducts))
+router.get("/all", asyncHandler(productController.fetchAllProducts))
 
 //fetch products by category
 router.get(
     "/category/:cat",
-    asyncHandler(ProductController.fetchProductByCategory)
+    asyncHandler(productController.fetchProductByCategory)
 )
 
 //fetch product by id
-router.get("/:id", asyncHandler(ProductController.fetchProductById))
+router.get("/:id", asyncHandler(productController.fetchProductById))
 
 //add new product
 router.post(
     "/",
     productValidator,
     validate,
-    asyncHandler(ProductController.addNewProduct)
+    asyncHandler(productController.create)
 )
 
 //update product by id
@@ -43,10 +45,10 @@ router.put(
     "/:id",
     productValidator,
     validate,
-    asyncHandler(ProductController.updateProductById)
+    asyncHandler(productController.updateProductById)
 )
 
 //delete product by id
-router.delete("/:id", asyncHandler(ProductController.deleteProductById))
+router.delete("/:id", asyncHandler(productController.deleteProductById))
 
 module.exports = router

@@ -20,9 +20,9 @@ class UploadService {
                 }),
             }
         } catch (error) {
-            return { error }
+            throw error
         }
     }
 }
 
-module.exports = new UploadService()
+module.exports = UploadService

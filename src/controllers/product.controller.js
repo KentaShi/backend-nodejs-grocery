@@ -1,156 +1,92 @@
 "use strict"
 
-const { NotFoundError, AppError } = require("../errors/app.error")
-const {
-    NotFoundResponse,
-    ErrorResponse,
-    NotModifiedResponse,
-} = require("../response/error.response")
-const { SuccessResponse } = require("../response/success.response")
+const { NotFoundError, AppError } = require("../core/errors/app.error")
+
+const { SuccessResponse } = require("../core/success/success.response")
 const ProductServive = require("../services/product.service")
 
 class ProductController {
     constructor() {
         this.productService = new ProductServive()
     }
-    fetchAllProducts = async (req, res, next) => {
+    findAll = async (req, res, next) => {
         try {
-            const { code, error, ...results } =
-                await this.productService.findAll()
-
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: "Found products",
-                        metadata: results,
-                    }).send(res)
-                case 404:
-                    return next(new NotFoundError())
-                default:
-                    return next(new AppError())
-            }
+            const { code, ...results } = await this.productService.findAll()
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
     }
-    fetchProductById = async (req, res, next) => {}
-    fetchProductByCategory = async (req, res, next) => {
+    findById = async (req, res, next) => {}
+    findByCategory = async (req, res, next) => {
         try {
             const { cat } = req.params
-            const { code, error, ...results } =
-                await this.productService.findByCategory({
+            const { code, ...results } =
+                await this.productService.findByCateSlug({
                     cate_slug: cat,
                 })
 
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: results,
-                    }).send(res)
-                default:
-                    return next(new AppError())
-            }
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
     }
-    addNewProduct = async (req, res, next) => {
+    create = async (req, res, next) => {
         try {
-            const { code, error, ...results } = await this.productService.add(
+            const { code, ...results } = await this.productService.create(
                 req.body
             )
 
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: results,
-                    }).send(res)
-                default:
-                    return next(new AppError())
-            }
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
     }
-    updateProductById = async (req, res, next) => {
+    updateById = async (req, res, next) => {
         try {
             const { id } = req.params
             const data = req.body
-            const { code, error, ...results } =
-                await this.productService.update(id, data)
-
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: results?.message
-                            ? results.message
-                            : "Update product successfully",
-                        metadata: results,
-                    }).send(res)
-                case 404:
-                    return next(new NotFoundError())
-                default:
-                    return next(new AppError())
-            }
+            const { code, ...results } = await this.productService.updateById(
+                id,
+                data
+            )
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
     }
-    deleteProductById = async (req, res, next) => {
+    deleteById = async (req, res, next) => {
         try {
             const { id } = req.params
-            const { code, error } = await this.productService.delete({
+            await this.productService.deleteById({
                 product_id: id,
             })
 
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: {},
-                    }).send(res)
-                case 404:
-                    return next(new NotFoundError())
-                default:
-                    return next(new AppError())
-            }
+            return new SuccessResponse().send(res)
         } catch (error) {
             next(error)
         }
     }
-    searchProduct = async (req, res, next) => {
+    search = async (req, res, next) => {
         try {
             const query = req.query.q
-            const { code, error, ...results } =
-                await this.productService.searchProducts(query)
+            const { code, ...results } = await this.productService.search(query)
 
-            if (error) return next(error)
-
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: results,
-                    }).send(res)
-                default:
-                    return next(new AppError())
-            }
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
     }
 }
 
-module.exports = new ProductController()
+module.exports = ProductController

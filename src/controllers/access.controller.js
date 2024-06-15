@@ -1,24 +1,16 @@
 "use strict"
 
 const HEADER = require("../constants/header.constant")
+const { SuccessResponse } = require("../core/success/success.response")
 const {
     BadRequestError,
     AppError,
     NotFoundError,
     ConflictError,
     UnauthorizedError,
-} = require("../errors/app.error")
-const {
-    ErrorResponse,
-    NotFoundResponse,
-    UnauthorizedResponse,
-    NotModifiedResponse,
-    BadRequestResponse,
-    ConflictResponse,
-} = require("../response/error.response")
-const { SuccessResponse } = require("../response/success.response")
+} = require("../core/errors/app.error")
+
 const AccessService = require("../services/access.service")
-const JWTService = require("../services/jwt.service")
 
 class AccessController {
     constructor() {
@@ -26,34 +18,13 @@ class AccessController {
     }
     login = async (req, res, next) => {
         try {
-            const { code, error, ...results } = await this.accessservice.login(
+            const { code, ...results } = await this.accessservice.login(
                 req.body
             )
-
-            if (error) {
-                return next(error)
-            }
-
-            switch (code) {
-                case 200:
-                    // res.cookie("accessToken", results.tokens.accessToken, {
-                    //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    //     httpOnly: true,
-                    //     secure: true,
-                    // }).cookie("refreshToken", results.tokens.refreshToken, {
-                    //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-                    //     httpOnly: true,
-                    //     secure: true,
-                    // })
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: results,
-                    }).send(res)
-                case 400:
-                    return next(new BadRequestError())
-                default:
-                    return next(new AppError())
-            }
+            return new SuccessResponse({
+                message: "success",
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
@@ -61,25 +32,13 @@ class AccessController {
     logout = async (req, res, next) => {
         try {
             const { userId } = req.payload
-            const { code, error, ...results } = await this.accessservice.logout(
-                {
-                    userId,
-                }
-            )
-            if (error) {
-                return next(error)
-            }
-            switch (code) {
-                case 200:
-                    res.clearCookie("access_token")
-                    res.clearCookie("refresh_token")
-                    return new SuccessResponse({
-                        message: "Logout successful",
-                        metadata: results,
-                    }).send(res)
-                default:
-                    return next(new AppError())
-            }
+            await this.accessservice.logout({
+                userId,
+            })
+
+            return new SuccessResponse({
+                message: "success",
+            }).send(res)
         } catch (error) {
             next(error)
         }
@@ -87,22 +46,14 @@ class AccessController {
 
     register = async (req, res, next) => {
         try {
-            const { code, error, ...results } =
-                await this.accessservice.register(req.body)
-            if (error) return next(error)
-            switch (code) {
-                case 201:
-                    return new SuccessResponse({
-                        message: "success",
-                        metadata: results,
-                    }).send(res)
-                case 409:
-                    return next(new ConflictError())
-                case 400:
-                    return next(new BadRequestError())
-                default:
-                    return next(new AppError())
-            }
+            const { code, ...results } = await this.accessservice.register(
+                req.body
+            )
+
+            return new SuccessResponse({
+                message: "success",
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
@@ -114,26 +65,16 @@ class AccessController {
             if (!refreshToken) {
                 return next(new NotFoundError("No refresh token"))
             }
-            const { code, error, ...results } =
-                await this.accessservice.getAuth({
-                    refreshToken,
-                })
-            if (error) {
-                if (error.message === "jwt expired")
-                    return next(new UnauthorizedError())
-                return next(error)
-            }
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        metadata: results,
-                    }).send(res)
-                case 404:
-                    return next(new NotFoundError())
-                default:
-                    return next(new AppError())
-            }
+            const { code, ...results } = await this.accessservice.getAuth({
+                refreshToken,
+            })
+
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
+            if (error.message === "jwt expired")
+                return next(new UnauthorizedError())
             next(error)
         }
     }
@@ -142,21 +83,15 @@ class AccessController {
         try {
             const refreshToken = req.headers[HEADER.REFRESHTOKEN]
             if (!refreshToken) {
-                return next(new NotFoundError("No refresh token"))
+                return next(new BadRequestError("No refresh token"))
             }
-            const { code, error, ...results } =
-                await this.accessservice.refreshToken({
-                    refreshToken,
-                })
-            if (error) return next(error)
-            switch (code) {
-                case 200:
-                    return new SuccessResponse({
-                        metadata: results,
-                    }).send(res)
-                default:
-                    return next(new AppError())
-            }
+            const { code, ...results } = await this.accessservice.refreshToken(
+                refreshToken
+            )
+
+            return new SuccessResponse({
+                metadata: results,
+            }).send(res)
         } catch (error) {
             next(error)
         }
