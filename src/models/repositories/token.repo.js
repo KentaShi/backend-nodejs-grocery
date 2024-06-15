@@ -8,6 +8,13 @@ class TokenRepository {
             refreshToken,
         })
     }
+    findOneAndUpdate = async ({ userId, updateData }) => {
+        return await TokenModel.findOneAndUpdate({ _id: userId }, updateData, {
+            new: true,
+            upsert: true,
+            setDefaultsOnInsert: true,
+        })
+    }
     findByUserId = async ({ userId }) => {
         return await TokenModel.findOne({ userId }).lean()
     }

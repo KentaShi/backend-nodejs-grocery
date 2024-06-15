@@ -11,7 +11,7 @@ class ProductRepository {
     findBySlug = async ({ slug }) => {
         return await productModel.findOne({ product_slug: slug }).lean()
     }
-    findByCate = async ({ cate_slug }) => {
+    findByCateSlug = async ({ cate_slug }) => {
         return await productModel.find({ product_cate: cate_slug }).lean()
     }
     isExistById = async ({ product_id }) => {

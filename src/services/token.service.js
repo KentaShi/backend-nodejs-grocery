@@ -14,8 +14,18 @@ class TokenService {
             })
             return userToken
         } catch (error) {
-            console.log(error)
-            throw new Error("Couldn't create token")
+            throw error
+        }
+    }
+    findOneAndUpdate = async ({ userId, updateData }) => {
+        try {
+            const userToken = await this.tokenRepository.findOneAndUpdate({
+                userId,
+                updateData,
+            })
+            return userToken
+        } catch (error) {
+            throw error
         }
     }
     findByUserId = async ({ userId }) => {
@@ -25,7 +35,7 @@ class TokenService {
             })
             return userToken
         } catch (error) {
-            throw new Error("Couldn't find token by user id")
+            throw error
         }
     }
     updateByUserId = async ({ userId, refreshToken }) => {
@@ -36,15 +46,15 @@ class TokenService {
             })
             return userToken
         } catch (error) {
-            throw new Error("Couldn't update by user id")
+            throw error
         }
     }
     deleteByUserId = async ({ userId }) => {
         try {
             await this.tokenRepository.deleteByUserId({ userId })
         } catch (error) {
-            throw new Error("Couldn't delete by user id")
+            throw error
         }
     }
 }
-module.exports = new TokenService()
+module.exports = TokenService

@@ -1,9 +1,13 @@
 "use strict"
-const { StatusCodes, ReasonPhrases } = require("../utils/httpStatusCode")
+const { StatusCodes, ReasonPhrases } = require("../../utils/httpStatusCode")
 
 class SuccessResponse {
-    constructor({ message, statusCode = StatusCodes.OK, metadata = {} }) {
-        this.message = message || "Success"
+    constructor({
+        message = ReasonPhrases.OK,
+        statusCode = StatusCodes.OK,
+        metadata = null,
+    }) {
+        this.message = message
         this.statusCode = statusCode
         this.metadata = metadata
     }

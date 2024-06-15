@@ -1,12 +1,13 @@
 "use strict"
 
+const {
+    ConflictError,
+    NotFoundError,
+    BadRequestError,
+} = require("../core/errors/app.error")
 const CategoryRepository = require("../models/repositories/category.repo")
 const ProductRepository = require("../models/repositories/product.repo")
-const {
-    NotFoundResponse,
-    BadRequestResponse,
-    ErrorResponse,
-} = require("../response/error.response")
+
 const { generateCategorySlug } = require("../utils")
 
 class CategoryService {
@@ -22,9 +23,7 @@ class CategoryService {
                 cate_slug,
             })
             if (cateExits) {
-                return {
-                    code: 409,
-                }
+                throw new ConflictError()
             }
             const category = await this.categoryRepository.create({
                 cate_name,
@@ -35,23 +34,18 @@ class CategoryService {
                 category: category,
             }
         } catch (error) {
-            return { error }
+            throw error
         }
     }
     findAll = async () => {
         try {
             const categories = await this.categoryRepository.findAll()
-            if (categories.length > 0) {
-                return {
-                    code: 200,
-                    categories,
-                }
-            }
             return {
-                code: 404,
+                code: 200,
+                categories,
             }
         } catch (error) {
-            return { error }
+            throw error
         }
     }
     getCountOfProductsByCateSlug = async ({ cate_slug }) => {
@@ -64,28 +58,25 @@ class CategoryService {
                 count: products.length,
             }
         } catch (error) {
-            return { error }
+            throw error
         }
     }
-    deleteOne = async ({ cate_id }) => {
+    deleteById = async ({ cate_id }) => {
         try {
             const foundCate = await this.categoryRepository.findOne({ cate_id })
             if (!foundCate) {
-                return { code: 404 }
+                throw new NotFoundError()
             }
             const { cate_slug } = foundCate
             const products = await this.productRepository.findByCate({
                 cate_slug,
             })
             if (products.length > 0) {
-                return {
-                    code: 400,
-                }
+                throw new BadRequestError()
             }
             await this.categoryRepository.deleteById({ cate_id })
-            return { code: 200 }
         } catch (error) {
-            return { error }
+            throw error
         }
     }
 }

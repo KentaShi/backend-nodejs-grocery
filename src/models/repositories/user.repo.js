@@ -16,7 +16,7 @@ class UserRepository {
         return await userModel.findOne({ _id: userId }).select(select).lean()
     }
 
-    createUser = async ({ username, passwordHashed }) => {
+    create = async ({ username, passwordHashed }) => {
         return await userModel.create({ username, password: passwordHashed })
     }
 }

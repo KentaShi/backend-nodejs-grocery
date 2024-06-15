@@ -1,14 +1,13 @@
 "use strict"
 
-const { BadRequestError, AppError } = require("../errors/app.error")
-const {
-    BadRequestResponse,
-    ErrorResponse,
-} = require("../response/error.response")
-const { SuccessResponse } = require("../response/success.response")
+const { BadRequestError, AppError } = require("../core/errors/app.error")
+const { SuccessResponse } = require("../core/success/success.response")
 const UploadService = require("../services/upload.service")
 
 class UploadController {
+    constructor() {
+        this.uploadService = new UploadService()
+    }
     uploadFileThumb = async (req, res, next) => {
         try {
             const { file } = req
@@ -16,12 +15,12 @@ class UploadController {
                 return next(new BadRequestError("Missing upload file"))
             }
 
-            const { code, error, ...results } =
-                await UploadService.uploadImageFromsLocal({ path: file.path })
-            if (error) return next(error)
+            const { code, ...results } =
+                await this.uploadService.uploadImageFromsLocal({
+                    path: file.path,
+                })
 
             return new SuccessResponse({
-                message: "success",
                 metadata: results,
             }).send(res)
         } catch (error) {
