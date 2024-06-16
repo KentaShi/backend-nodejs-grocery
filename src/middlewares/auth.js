@@ -14,37 +14,39 @@ const {
 const jwtService = new JWTService()
 const tokenService = new TokenService()
 
-const verifyAccessToken = async (req, res, next) => {
-    if (!req.headers["authorization"]) {
-        next(new BadRequestError("Invalid access token"))
-    }
-    const authHeader = req.headers["authorization"]
-    const token = authHeader.split(" ")[1]
-    JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
-        if (err) {
-            if (err.message === "jwt expired") {
-                next(new UnauthorizedError(err.message))
-            }
-            next(new BadRequestError(err.message))
-        }
-        req.payload = payload
-        next()
-    })
-}
+// const verifyAccessToken = async (req, res, next) => {
+//     if (!req.headers["authorization"]) {
+//         next(new BadRequestError("Invalid access token"))
+//     }
+//     const authHeader = req.headers["authorization"]
+//     const token = authHeader.split(" ")[1]
+//     JWT.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, payload) => {
+//         if (err) {
+//             if (err.message === "jwt expired") {
+//                 next(new UnauthorizedError(err.message))
+//             }
+//             next(new BadRequestError(err.message))
+//         }
+//         req.payload = payload
+//         next()
+//     })
+// }
 
 const authenticate = asyncHandler(async (req, res, next) => {
-    if (!req.headers[HEADER.AUTHORIZATION]) {
-        next(new BadRequestError("Invalid access token"))
-    }
-    if (!req.headers[HEADER.REFRESHTOKEN]) {
-        next(new BadRequestError("Invalid refresh token"))
-    }
-
-    const authHeader = req.headers[HEADER.AUTHORIZATION]
-    const accessToken = authHeader.split(" ")[1]
-    const rtoken = req.headers[HEADER.REFRESHTOKEN]
-
     try {
+        const authHeader = req.headers[HEADER.AUTHORIZATION]
+
+        if (!authHeader) {
+            throw new BadRequestError("Invalid access token")
+        }
+
+        const rtoken = req.headers[HEADER.REFRESHTOKEN]
+        if (!rtoken) {
+            throw new BadRequestError("Invalid refresh token")
+        }
+
+        const accessToken = authHeader.split(" ")[1]
+
         const payload = await jwtService.verifyRefreshToken(rtoken)
         const { user } = payload
         const foundToken = await tokenService.findByUserId({
@@ -62,7 +64,7 @@ const authenticate = asyncHandler(async (req, res, next) => {
                     throw err
                 })
         } else {
-            throw new BadRequestError("Invalid refresh token")
+            throw new BadRequestError("Invalid refresh token...")
         }
     } catch (error) {
         next(error)
@@ -81,4 +83,4 @@ const authenticate = asyncHandler(async (req, res, next) => {
     // })
 })
 
-module.exports = { verifyAccessToken, authenticate }
+module.exports = { authenticate }

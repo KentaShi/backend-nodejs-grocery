@@ -8,7 +8,6 @@ const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const app = express()
 
-const { AppError } = require("./errors/app.error")
 const errorHandler = require("./middlewares/errorHandler")
 
 require("dotenv").config()
@@ -31,6 +30,7 @@ app.use(cookieParser())
 
 //init mongoose db cloud
 const { connectDB } = require("./db/mongodbCloud.init")
+const { AppError } = require("./core/errors/app.error")
 
 connectDB()
 

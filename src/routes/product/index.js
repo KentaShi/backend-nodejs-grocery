@@ -17,20 +17,17 @@ router.get(
     "/search",
     searchValidator,
     validate,
-    asyncHandler(productController.searchProduct)
+    asyncHandler(productController.search)
 )
 
 //fetch all products
-router.get("/all", asyncHandler(productController.fetchAllProducts))
+router.get("/all", asyncHandler(productController.findAll))
 
 //fetch products by category
-router.get(
-    "/category/:cat",
-    asyncHandler(productController.fetchProductByCategory)
-)
+router.get("/category/:cat", asyncHandler(productController.findByCategory))
 
 //fetch product by id
-router.get("/:id", asyncHandler(productController.fetchProductById))
+router.get("/:id", asyncHandler(productController.findById))
 
 //add new product
 router.post(
@@ -45,10 +42,10 @@ router.put(
     "/:id",
     productValidator,
     validate,
-    asyncHandler(productController.updateProductById)
+    asyncHandler(productController.updateById)
 )
 
 //delete product by id
-router.delete("/:id", asyncHandler(productController.deleteProductById))
+router.delete("/:id", asyncHandler(productController.deleteById))
 
 module.exports = router

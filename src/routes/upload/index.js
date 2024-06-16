@@ -1,8 +1,10 @@
 "use strict"
 const router = require("express").Router()
 const { uploadDisk } = require("../../config/multer.config")
-const uploadController = require("../../controllers/upload.controller")
+const UploadController = require("../../controllers/upload.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
+
+const uploadController = new UploadController()
 
 router.post(
     "/thumb",

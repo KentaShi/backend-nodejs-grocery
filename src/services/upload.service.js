@@ -1,7 +1,6 @@
 "use strict"
 
 const cloudinary = require("../config/cloudinary.config")
-const { AppError } = require("../errors/app.error")
 
 class UploadService {
     uploadImageFromsLocal = async ({ path }) => {

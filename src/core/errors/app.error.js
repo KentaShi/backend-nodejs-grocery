@@ -1,5 +1,6 @@
 "use strict"
-const { StatusCodes, ReasonPhrases } = require("../utils/httpStatusCode")
+
+const { ReasonPhrases, StatusCodes } = require("../../utils/httpStatusCode")
 
 class AppError extends Error {
     constructor(
