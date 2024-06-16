@@ -31,6 +31,6 @@ router.post(
 )
 
 //delete category
-router.delete("/:id", asyncHandler(categoryController.deleteCateById))
+router.delete("/:id", asyncHandler(categoryController.deleteById))
 
 module.exports = router

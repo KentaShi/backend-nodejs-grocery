@@ -31,7 +31,7 @@ class AccessController {
     }
     logout = async (req, res, next) => {
         try {
-            const { userId } = req.payload
+            const { userId } = req.user
             await this.accessservice.logout({
                 userId,
             })
