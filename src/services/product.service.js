@@ -108,7 +108,25 @@ class ProductSerive {
                 product_id,
             })
             if (!isExists) throw new NotFoundError()
-            await this.productRepository.updateById(product_id, data)
+            const updatedProduct = await this.productRepository.updateById(
+                product_id,
+                data
+            )
+
+            return {
+                code: 200,
+                product: getInfoData({
+                    fields: [
+                        "product_name",
+                        "product_thumb",
+                        "product_price",
+                        "product_unit",
+                        "product_slug",
+                        "product_cate",
+                    ],
+                    object: updatedProduct,
+                }),
+            }
         } catch (error) {
             throw error
         }

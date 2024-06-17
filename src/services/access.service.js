@@ -122,6 +122,17 @@ class AccessService {
             const { accessToken, refreshToken } = await this.#generateTokenPair(
                 user
             )
+            // update user's refresh token
+            const updateData = { refreshToken }
+            const userToken = await this.tokenService.findOneAndUpdate({
+                userId: user.userId,
+                updateData,
+            })
+
+            if (!userToken) {
+                throw new AppError("Error updating user token")
+            }
+
             return { code: 200, accessToken, refreshToken }
         } catch (error) {
             throw error
