@@ -10,6 +10,7 @@ const {
     BadRequestError,
     NotFoundError,
     ConflictError,
+    ForbiddenError,
 } = require("../core/errors/app.error")
 
 class AccessService {
@@ -45,6 +46,7 @@ class AccessService {
                 username: foundUser.username,
                 roles: foundUser.roles,
             }
+
             const { accessToken, refreshToken } = await this.#generateTokenPair(
                 user
             )
@@ -97,6 +99,15 @@ class AccessService {
             if (!foundUser) {
                 throw new NotFoundError()
             }
+
+            //todo: handle login on other session
+            const foundUserToken = await this.tokenService.findByUserId({
+                userId: user.userId,
+            })
+            if (foundUserToken.refreshToken !== refreshToken) {
+                throw new ForbiddenError("Token had been updated, login again")
+            }
+            //todo: end
 
             const accessToken = await this.jwtService.signAccessToken({ user })
 
