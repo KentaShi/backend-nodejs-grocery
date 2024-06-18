@@ -9,6 +9,7 @@ const HEADER = require("../constants/header.constant")
 const {
     BadRequestError,
     UnauthorizedError,
+    ForbiddenError,
 } = require("../core/errors/app.error")
 
 const jwtService = new JWTService()
@@ -41,7 +42,7 @@ const authenticate = asyncHandler(async (req, res, next) => {
             req.refreshToken = rtoken
             next()
         } else {
-            throw new BadRequestError("Invalid refresh token...")
+            throw new ForbiddenError("Invalid refresh token...")
         }
     } catch (error) {
         next(error)

@@ -57,6 +57,14 @@ class UnauthorizedError extends AppError {
         super(message, statusCode)
     }
 }
+class ForbiddenError extends AppError {
+    constructor(
+        message = ReasonPhrases.FORBIDDEN,
+        statusCode = StatusCodes.FORBIDDEN
+    ) {
+        super(message, statusCode)
+    }
+}
 
 module.exports = {
     AppError,
@@ -65,4 +73,5 @@ module.exports = {
     UnauthorizedError,
     NotFoundError,
     NotModifiedError,
+    ForbiddenError,
 }
