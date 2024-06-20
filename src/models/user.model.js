@@ -19,8 +19,8 @@ var userSchema = new Schema(
         },
         roles: {
             type: String,
-            enum: ["admin", "user"],
-            default: "user",
+            enum: ["admin", "user", "guest"],
+            default: "guest",
         },
     },
     { timestamps: true, collection: COLLECTION_NAME }
