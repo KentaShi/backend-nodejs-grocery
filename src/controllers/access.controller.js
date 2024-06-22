@@ -22,7 +22,6 @@ class AccessController {
                 req.body
             )
             return new SuccessResponse({
-                message: "success",
                 metadata: results,
             }).send(res)
         } catch (error) {
@@ -32,13 +31,9 @@ class AccessController {
     logout = async (req, res, next) => {
         try {
             const { userId } = req.user
-            await this.accessservice.logout({
-                userId,
-            })
+            await this.accessservice.logout(userId)
 
-            return new SuccessResponse({
-                message: "success",
-            }).send(res)
+            return new SuccessResponse({}).send(res)
         } catch (error) {
             next(error)
         }
@@ -49,9 +44,7 @@ class AccessController {
             const { code, ...results } = await this.accessservice.register(
                 req.body
             )
-
             return new SuccessResponse({
-                message: "success",
                 metadata: results,
             }).send(res)
         } catch (error) {
@@ -65,9 +58,9 @@ class AccessController {
             if (!refreshToken) {
                 return next(new NotFoundError("No refresh token"))
             }
-            const { code, ...results } = await this.accessservice.getAuth({
-                refreshToken,
-            })
+            const { code, ...results } = await this.accessservice.getAuth(
+                refreshToken
+            )
 
             return new SuccessResponse({
                 metadata: results,

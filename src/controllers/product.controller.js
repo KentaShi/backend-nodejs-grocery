@@ -24,9 +24,7 @@ class ProductController {
         try {
             const { cat } = req.params
             const { code, ...results } =
-                await this.productService.findByCateSlug({
-                    cate_slug: cat,
-                })
+                await this.productService.findByCateSlug(cat)
 
             return new SuccessResponse({
                 metadata: results,
@@ -66,11 +64,9 @@ class ProductController {
     deleteById = async (req, res, next) => {
         try {
             const { id } = req.params
-            await this.productService.deleteById({
-                product_id: id,
-            })
+            await this.productService.deleteById(id)
 
-            return new SuccessResponse().send(res)
+            return new SuccessResponse({}).send(res)
         } catch (error) {
             next(error)
         }

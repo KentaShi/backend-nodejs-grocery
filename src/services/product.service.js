@@ -4,9 +4,11 @@ const { generateUniqueProductSlug, getInfoData } = require("../utils")
 
 const ProductRepository = require("../models/repositories/product.repo")
 const { NotFoundError, BadRequestError } = require("../core/errors/app.error")
+const UploadService = require("./upload.service")
 class ProductSerive {
     constructor() {
         this.productRepository = new ProductRepository()
+        this.uploadService = new UploadService()
     }
     create = async (data) => {
         try {
@@ -35,6 +37,7 @@ class ProductSerive {
                 code: 200,
                 product: getInfoData({
                     fields: [
+                        "_id",
                         "product_name",
                         "product_thumb",
                         "product_price",
@@ -60,11 +63,9 @@ class ProductSerive {
             throw error
         }
     }
-    findById = async ({ product_id }) => {
+    findById = async (product_id) => {
         try {
-            const product = await this.productRepository.findById({
-                product_id,
-            })
+            const product = await this.productRepository.findById(product_id)
             if (!product) {
                 throw new NotFoundError()
             }
@@ -76,11 +77,11 @@ class ProductSerive {
             throw error
         }
     }
-    findByCateSlug = async ({ cate_slug }) => {
+    findByCateSlug = async (cate_slug) => {
         try {
-            const products = await this.productRepository.findByCateSlug({
-                cate_slug,
-            })
+            const products = await this.productRepository.findByCateSlug(
+                cate_slug
+            )
             return {
                 code: 200,
                 products,
@@ -90,23 +91,25 @@ class ProductSerive {
         }
     }
 
-    deleteById = async ({ product_id }) => {
+    deleteById = async (product_id) => {
         try {
-            const isExists = await this.productRepository.isExistById({
-                product_id,
-            })
-            if (!isExists) throw new BadRequestError()
+            const product = await this.productRepository.findById(product_id)
+            if (!product) throw new BadRequestError()
 
-            await this.productRepository.deleteById({ product_id })
+            const imagePublicId = product.product_thumb.public_id
+
+            await this.uploadService.deleteImage(imagePublicId)
+
+            await this.productRepository.deleteById(product_id)
         } catch (error) {
             throw error
         }
     }
     updateById = async (product_id, data) => {
         try {
-            const isExists = await this.productRepository.isExistById({
-                product_id,
-            })
+            const isExists = await this.productRepository.isExistById(
+                product_id
+            )
             if (!isExists) throw new NotFoundError()
             const updatedProduct = await this.productRepository.updateById(
                 product_id,

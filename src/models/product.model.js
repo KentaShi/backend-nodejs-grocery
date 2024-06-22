@@ -13,8 +13,14 @@ var productSchema = new Schema(
             required: true,
         },
         product_thumb: {
-            type: String,
-            required: true,
+            public_id: {
+                type: String,
+                required: true,
+            },
+            url: {
+                type: String,
+                required: true,
+            },
         },
         product_slug: String,
         product_price: {

@@ -28,7 +28,7 @@ class TokenRepository {
             }
         )
     }
-    deleteByUserId = async ({ userId }) => {
+    deleteByUserId = async (userId) => {
         return await TokenModel.deleteOne({ userId })
     }
 }
