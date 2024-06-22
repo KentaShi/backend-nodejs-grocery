@@ -50,9 +50,9 @@ class CategoryService {
     }
     getCountOfProductsByCateSlug = async ({ cate_slug }) => {
         try {
-            const products = await this.productRepository.findByCateSlug({
-                cate_slug,
-            })
+            const products = await this.productRepository.findByCateSlug(
+                cate_slug
+            )
             return {
                 code: 200,
                 count: products.length,
@@ -63,7 +63,7 @@ class CategoryService {
     }
     deleteById = async ({ cate_id }) => {
         try {
-            const foundCate = await this.categoryRepository.findOne({ cate_id })
+            const foundCate = await this.categoryRepository.findById(cate_id)
             if (!foundCate) {
                 throw new NotFoundError()
             }

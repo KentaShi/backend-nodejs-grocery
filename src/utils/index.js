@@ -9,7 +9,7 @@ const generateUniqueProductSlug = async (product_slug, productRepository) => {
     let baseSlug = slugify(product_slug, { lower: true })
     let slug = baseSlug
     let suffix = 1
-    while (await productRepository.findBySlug({ slug })) {
+    while (await productRepository.findBySlug(slug)) {
         slug = `${baseSlug}-${suffix}`
         suffix++
     }

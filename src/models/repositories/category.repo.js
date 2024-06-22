@@ -15,7 +15,7 @@ class CategoryRepository {
     findAll = async () => {
         return await categoryModel.find().lean()
     }
-    findOne = async ({ cate_id }) => {
+    findById = async (cate_id) => {
         return await categoryModel.findOne({ _id: cate_id }).lean()
     }
     deleteById = async ({ cate_id }) => {

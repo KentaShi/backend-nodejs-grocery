@@ -32,7 +32,7 @@ class CategoryController {
                 cate_id: id,
             })
 
-            return new SuccessResponse().send(res)
+            return new SuccessResponse({}).send(res)
         } catch (error) {
             next(error)
         }
@@ -57,7 +57,6 @@ class CategoryController {
                     cate_slug,
                 })
             return new SuccessResponse({
-                message: "success",
                 metadata: { count },
             }).send(res)
         } catch (error) {

@@ -29,7 +29,7 @@ class AccessService {
 
     login = async ({ username, password }) => {
         try {
-            const foundUser = await this.userRepository.findUserByUsername({
+            const foundUser = await this.userRepository.findByUsername({
                 username,
             })
             if (!foundUser) {
@@ -77,15 +77,15 @@ class AccessService {
         }
     }
 
-    logout = async ({ userId }) => {
+    logout = async (userId) => {
         try {
-            await this.tokenService.deleteByUserId({ userId })
+            await this.tokenService.deleteByUserId(userId)
         } catch (error) {
             throw error
         }
     }
 
-    getAuth = async ({ refreshToken }) => {
+    getAuth = async (refreshToken) => {
         try {
             const payload = await this.jwtService.verifyRefreshToken(
                 refreshToken
@@ -93,7 +93,7 @@ class AccessService {
 
             const { user } = payload
 
-            const foundUser = await this.userRepository.findUserById({
+            const foundUser = await this.userRepository.findById({
                 userId: user.userId,
             })
             if (!foundUser) {
@@ -153,7 +153,7 @@ class AccessService {
     register = async ({ username, password, confirmPassword }) => {
         try {
             if (password !== confirmPassword) throw new BadRequestError()
-            const foundUser = await this.userRepository.findUserByUsername({
+            const foundUser = await this.userRepository.findByUsername({
                 username,
             })
             if (foundUser) {

@@ -5,16 +5,16 @@ class ProductRepository {
     findAll = async () => {
         return await productModel.find().lean()
     }
-    findById = async ({ product_id }) => {
+    findById = async (product_id) => {
         return await productModel.findById(product_id).lean()
     }
-    findBySlug = async ({ slug }) => {
+    findBySlug = async (slug) => {
         return await productModel.findOne({ product_slug: slug }).lean()
     }
-    findByCateSlug = async ({ cate_slug }) => {
+    findByCateSlug = async (cate_slug) => {
         return await productModel.find({ product_cate: cate_slug }).lean()
     }
-    isExistById = async ({ product_id }) => {
+    isExistById = async (product_id) => {
         return await productModel.exists({ _id: product_id })
     }
     add = async ({
@@ -48,7 +48,7 @@ class ProductRepository {
             }
         )
     }
-    deleteById = async ({ product_id }) => {
+    deleteById = async (product_id) => {
         await productModel.deleteOne({ _id: product_id })
     }
     search = async (query) => {

@@ -49,9 +49,9 @@ class TokenService {
             throw error
         }
     }
-    deleteByUserId = async ({ userId }) => {
+    deleteByUserId = async (userId) => {
         try {
-            await this.tokenRepository.deleteByUserId({ userId })
+            await this.tokenRepository.deleteByUserId(userId)
         } catch (error) {
             throw error
         }
