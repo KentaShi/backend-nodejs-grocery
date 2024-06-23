@@ -18,7 +18,7 @@ class CategoryRepository {
     findById = async (cate_id) => {
         return await categoryModel.findOne({ _id: cate_id }).lean()
     }
-    deleteById = async ({ cate_id }) => {
+    deleteById = async (cate_id) => {
         await categoryModel.deleteOne({ _id: cate_id })
     }
 }

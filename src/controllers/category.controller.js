@@ -1,11 +1,5 @@
 "use strict"
 
-const {
-    AppError,
-    ConflictError,
-    NotFoundError,
-    BadRequestError,
-} = require("../core/errors/app.error")
 const { SuccessResponse } = require("../core/success/success.response")
 const CategoryService = require("../services/category.service")
 
@@ -28,9 +22,7 @@ class CategoryController {
     deleteById = async (req, res, next) => {
         try {
             const { id } = req.params
-            await this.categoryService.deleteById({
-                cate_id: id,
-            })
+            await this.categoryService.deleteById(id)
 
             return new SuccessResponse({}).send(res)
         } catch (error) {
