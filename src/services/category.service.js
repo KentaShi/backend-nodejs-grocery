@@ -61,20 +61,20 @@ class CategoryService {
             throw error
         }
     }
-    deleteById = async ({ cate_id }) => {
+    deleteById = async (cate_id) => {
         try {
             const foundCate = await this.categoryRepository.findById(cate_id)
             if (!foundCate) {
                 throw new NotFoundError()
             }
             const { cate_slug } = foundCate
-            const products = await this.productRepository.findByCateSlug({
-                cate_slug,
-            })
+            const products = await this.productRepository.findByCateSlug(
+                cate_slug
+            )
             if (products.length > 0) {
                 throw new BadRequestError()
             }
-            await this.categoryRepository.deleteById({ cate_id })
+            await this.categoryRepository.deleteById(cate_id)
         } catch (error) {
             throw error
         }
