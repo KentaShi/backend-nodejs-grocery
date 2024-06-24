@@ -1,4 +1,5 @@
 const { body, query } = require("express-validator")
+const path = require("path")
 
 const productValidator = [
     body("product_name", "product_name does not empty").notEmpty(),
@@ -6,7 +7,19 @@ const productValidator = [
         min: 0,
     }),
     body("product_cate", "product_cate does not empty").notEmpty(),
-    body("product_thumb", "product_thumb does not empty").notEmpty(),
+    body("file", "Invalid product image").custom((value, { req }) => {
+        const extension = path.extname(value).toLowerCase()
+        switch (extension) {
+            case ".jpg":
+                return ".jpg"
+            case ".jpeg":
+                return ".jpeg"
+            case ".png":
+                return ".png"
+            default:
+                return false
+        }
+    }),
 ]
 
 const categoryValidator = [

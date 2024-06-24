@@ -36,7 +36,8 @@ class ProductController {
     create = async (req, res, next) => {
         try {
             const { code, ...results } = await this.productService.create(
-                req.body
+                req.body,
+                req.file.path
             )
 
             return new SuccessResponse({

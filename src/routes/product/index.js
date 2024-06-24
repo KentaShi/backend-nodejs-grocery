@@ -7,6 +7,7 @@ const asyncHandler = require("../../helpers/asyncHandler")
 const { productValidator, searchValidator } = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
+const { uploadDisk } = require("../../config/multer.config")
 
 const productController = new ProductController()
 
@@ -32,6 +33,7 @@ router.get("/:id", asyncHandler(productController.findById))
 //add new product
 router.post(
     "/",
+    uploadDisk.single("file"),
     productValidator,
     validate,
     asyncHandler(productController.create)

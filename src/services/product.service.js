@@ -10,43 +10,54 @@ class ProductSerive {
         this.productRepository = new ProductRepository()
         this.uploadService = new UploadService()
     }
-    create = async (data) => {
+    create = async (data, imagePath) => {
         try {
-            const {
-                product_name,
-                product_thumb,
-                product_price,
-                product_unit,
-                product_cate,
-            } = data
+            const { ...resUpload } =
+                await this.uploadService.uploadImageFromsLocal(imagePath)
 
-            const product_slug = await generateUniqueProductSlug(
-                product_name,
-                this.productRepository
-            )
-            const newProduct = await this.productRepository.add({
-                product_name,
-                product_thumb,
-                product_price,
-                product_unit,
-                product_cate,
-                product_slug,
-            })
+            try {
+                const product_thumb = {
+                    url: resUpload.url,
+                    public_id: resUpload.public_id,
+                }
+                const {
+                    product_name,
+                    product_price,
+                    product_unit,
+                    product_cate,
+                } = data
 
-            return {
-                code: 200,
-                product: getInfoData({
-                    fields: [
-                        "_id",
-                        "product_name",
-                        "product_thumb",
-                        "product_price",
-                        "product_unit",
-                        "product_slug",
-                        "product_cate",
-                    ],
-                    object: newProduct,
-                }),
+                const product_slug = await generateUniqueProductSlug(
+                    product_name,
+                    this.productRepository
+                )
+                const newProduct = await this.productRepository.add({
+                    product_name,
+                    product_thumb,
+                    product_price,
+                    product_unit,
+                    product_cate,
+                    product_slug,
+                })
+
+                return {
+                    code: 200,
+                    product: getInfoData({
+                        fields: [
+                            "_id",
+                            "product_name",
+                            "product_thumb",
+                            "product_price",
+                            "product_unit",
+                            "product_slug",
+                            "product_cate",
+                        ],
+                        object: newProduct,
+                    }),
+                }
+            } catch (error) {
+                await this.uploadService.deleteImage(resUpload.public_id)
+                throw error
             }
         } catch (error) {
             throw error

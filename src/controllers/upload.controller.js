@@ -15,10 +15,8 @@ class UploadController {
                 return next(new BadRequestError("Missing upload file"))
             }
 
-            const { code, ...results } =
-                await this.uploadService.uploadImageFromsLocal({
-                    path: file.path,
-                })
+            const { ...results } =
+                await this.uploadService.uploadImageFromsLocal(file.path)
 
             return new SuccessResponse({
                 metadata: results,
