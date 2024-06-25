@@ -4,12 +4,17 @@ const express = require("express")
 const router = express.Router()
 const ProductController = require("../../controllers/product.controller")
 const asyncHandler = require("../../helpers/asyncHandler")
-const { productValidator, searchValidator } = require("../../helpers/validator")
+const {
+    searchValidator,
+    createProductValidator,
+    updateProductValidator,
+} = require("../../helpers/validator")
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 const { uploadDisk } = require("../../config/multer.config")
+const { io } = require("../../../server")
 
-const productController = new ProductController()
+const productController = new ProductController(io)
 
 router.use(authenticate)
 
@@ -34,7 +39,7 @@ router.get("/:id", asyncHandler(productController.findById))
 router.post(
     "/",
     uploadDisk.single("file"),
-    productValidator,
+    createProductValidator,
     validate,
     asyncHandler(productController.create)
 )
@@ -42,7 +47,7 @@ router.post(
 //update product by id
 router.put(
     "/:id",
-    productValidator,
+    updateProductValidator,
     validate,
     asyncHandler(productController.updateById)
 )

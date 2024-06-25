@@ -1,7 +1,7 @@
 const { body, query } = require("express-validator")
-const path = require("path")
+const path = require("node:path")
 
-const productValidator = [
+const createProductValidator = [
     body("product_name", "product_name does not empty").notEmpty(),
     body("product_price", "product_price must be a valid number").isInt({
         min: 0,
@@ -20,6 +20,14 @@ const productValidator = [
                 return false
         }
     }),
+]
+
+const updateProductValidator = [
+    body("product_name", "product_name does not empty").notEmpty(),
+    body("product_price", "product_price must be a valid number").isInt({
+        min: 0,
+    }),
+    body("product_cate", "product_cate does not empty").notEmpty(),
 ]
 
 const categoryValidator = [
@@ -46,7 +54,8 @@ const registerValidator = [
 const searchValidator = [query("q", "Text search is empty!").notEmpty()]
 
 module.exports = {
-    productValidator,
+    updateProductValidator,
+    createProductValidator,
     loginValidator,
     registerValidator,
     searchValidator,
