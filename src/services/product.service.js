@@ -131,6 +131,7 @@ class ProductSerive {
                 code: 200,
                 product: getInfoData({
                     fields: [
+                        "_id",
                         "product_name",
                         "product_thumb",
                         "product_price",

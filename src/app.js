@@ -4,11 +4,30 @@ const morgan = require("morgan")
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
+const http = require("http")
+const socketIo = require("socket.io")
 const app = express()
 
 const errorHandler = require("./middlewares/errorHandler")
+const { NotFoundError } = require("./core/errors/app.error")
+const socketService = require("./services/socket.service")
 
 require("dotenv").config()
+
+//init socket.io
+const server = http.createServer(app)
+const io = socketIo(server, {
+    cors: {
+        origin: "*", // Allow all origins
+        methods: ["GET", "POST", "PUT"], // Allow these HTTP methods
+        allowedHeaders: ["my-custom-header"], // Allow these headers
+        credentials: true, // Enable credentials (cookies, authorization headers, TLS client certificates)
+    },
+})
+
+global._io = io
+
+global._io.on("connection", socketService.connection)
 
 // init middleware
 const corsOptions = {
@@ -28,7 +47,6 @@ app.use(cookieParser())
 
 //init mongoose db cloud
 const { connectDB } = require("./db/mongodbCloud.init")
-const { NotFoundError } = require("./core/errors/app.error")
 
 connectDB()
 
@@ -36,7 +54,7 @@ connectDB()
 //require("./db/redis.init")
 
 //init routes
-app.use("", require("./routes").router)
+app.use("", require("./routes"))
 
 // error handlers
 // handle 404 errors
@@ -47,4 +65,4 @@ app.all("*", (req, res, next) => {
 // Global error handling middleware
 app.use(errorHandler)
 
-module.exports = app
+module.exports = { server }

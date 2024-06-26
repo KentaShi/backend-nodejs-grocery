@@ -1,12 +1,12 @@
 "use strict"
 
+const { result } = require("lodash")
 const { SuccessResponse } = require("../core/success/success.response")
 const ProductServive = require("../services/product.service")
 
 class ProductController {
-    constructor(io) {
+    constructor() {
         this.productService = new ProductServive()
-        this.io = io
     }
     findAll = async (req, res, next) => {
         try {
@@ -54,7 +54,7 @@ class ProductController {
                 id,
                 data
             )
-            this.io.emit("productUpdated", results.product)
+            _io.emit("productUpdated", results.product)
             return new SuccessResponse({
                 metadata: results,
             }).send(res)

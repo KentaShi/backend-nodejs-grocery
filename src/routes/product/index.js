@@ -12,9 +12,8 @@ const {
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 const { uploadDisk } = require("../../config/multer.config")
-const { io } = require("../../../server")
 
-const productController = new ProductController(io)
+const productController = new ProductController()
 
 router.use(authenticate)
 

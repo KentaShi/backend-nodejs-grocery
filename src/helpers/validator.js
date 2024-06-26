@@ -8,7 +8,7 @@ const createProductValidator = [
     }),
     body("product_cate", "product_cate does not empty").notEmpty(),
     body("file", "Invalid product image").custom((value, { req }) => {
-        const extension = path.extname(value).toLowerCase()
+        const extension = path.extname(req.file.path).toLowerCase()
         switch (extension) {
             case ".jpg":
                 return ".jpg"
