@@ -35,7 +35,7 @@ class ProductRepository {
         })
     }
     updateById = async (id, data) => {
-        return await productModel.updateOne(
+        return await productModel.findByIdAndUpdate(
             { _id: id },
             {
                 $set: {
@@ -45,7 +45,8 @@ class ProductRepository {
                     product_cate: data.product_cate,
                     product_thumb: data.product_thumb,
                 },
-            }
+            },
+            { new: true }
         )
     }
     deleteById = async (product_id) => {

@@ -1,7 +1,6 @@
 "use strict"
 
-const { NotFoundError, AppError } = require("../core/errors/app.error")
-
+const { result } = require("lodash")
 const { SuccessResponse } = require("../core/success/success.response")
 const ProductServive = require("../services/product.service")
 
@@ -36,7 +35,8 @@ class ProductController {
     create = async (req, res, next) => {
         try {
             const { code, ...results } = await this.productService.create(
-                req.body
+                req.body,
+                req.file.path
             )
 
             return new SuccessResponse({
@@ -54,6 +54,7 @@ class ProductController {
                 id,
                 data
             )
+            _io.emit("productUpdated", results.product)
             return new SuccessResponse({
                 metadata: results,
             }).send(res)

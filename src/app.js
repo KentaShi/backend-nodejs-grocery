@@ -1,20 +1,37 @@
 const express = require("express")
-const http = require("http")
-const socketIo = require("socket.io")
 const helmet = require("helmet")
 const morgan = require("morgan")
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
+const http = require("http")
+const socketIo = require("socket.io")
 const app = express()
 
 const errorHandler = require("./middlewares/errorHandler")
+const { NotFoundError } = require("./core/errors/app.error")
+const socketService = require("./services/socket.service")
 
 require("dotenv").config()
 
+//init socket.io
+const server = http.createServer(app)
+const io = socketIo(server, {
+    cors: {
+        origin: "*", // Allow all origins
+        methods: ["GET", "POST", "PUT"], // Allow these HTTP methods
+        allowedHeaders: ["my-custom-header"], // Allow these headers
+        credentials: true, // Enable credentials (cookies, authorization headers, TLS client certificates)
+    },
+})
+
+global._io = io
+
+global._io.on("connection", socketService.connection)
+
 // init middleware
 const corsOptions = {
-    origin: "*", // Replace with your Next.js app's URL
+    origin: "*",
     methods: "*",
     allowedHeaders: "*",
 }
@@ -30,7 +47,6 @@ app.use(cookieParser())
 
 //init mongoose db cloud
 const { connectDB } = require("./db/mongodbCloud.init")
-const { AppError } = require("./core/errors/app.error")
 
 connectDB()
 
@@ -43,31 +59,10 @@ app.use("", require("./routes"))
 // error handlers
 // handle 404 errors
 app.all("*", (req, res, next) => {
-    next(
-        new AppError({
-            message: `Can't find ${req.originalUrl} on this server!`,
-            statusCode: 404,
-        })
-    )
+    next(new NotFoundError(`Can't find ${req.originalUrl} on this server!`))
 })
 
 // Global error handling middleware
 app.use(errorHandler)
 
-const server = http.createServer(app)
-const io = socketIo(server, {
-    cors: {
-        origin: "*", // Allow all origins
-        methods: ["GET", "POST"], // Allow these HTTP methods
-        allowedHeaders: ["my-custom-header"], // Allow these headers
-        credentials: true, // Enable credentials (cookies, authorization headers, TLS client certificates)
-    },
-})
-
-io.on("connection", (socket) => {
-    socket.on("updated", (updatedProduct) => {
-        io.emit("updated", updatedProduct)
-    })
-})
-
-module.exports = { server, io }
+module.exports = { server }

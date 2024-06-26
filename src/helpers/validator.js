@@ -1,12 +1,33 @@
 const { body, query } = require("express-validator")
+const path = require("node:path")
 
-const productValidator = [
+const createProductValidator = [
     body("product_name", "product_name does not empty").notEmpty(),
     body("product_price", "product_price must be a valid number").isInt({
         min: 0,
     }),
     body("product_cate", "product_cate does not empty").notEmpty(),
-    body("product_thumb", "product_thumb does not empty").notEmpty(),
+    body("file", "Invalid product image").custom((value, { req }) => {
+        const extension = path.extname(req.file.path).toLowerCase()
+        switch (extension) {
+            case ".jpg":
+                return ".jpg"
+            case ".jpeg":
+                return ".jpeg"
+            case ".png":
+                return ".png"
+            default:
+                return false
+        }
+    }),
+]
+
+const updateProductValidator = [
+    body("product_name", "product_name does not empty").notEmpty(),
+    body("product_price", "product_price must be a valid number").isInt({
+        min: 0,
+    }),
+    body("product_cate", "product_cate does not empty").notEmpty(),
 ]
 
 const categoryValidator = [
@@ -33,7 +54,8 @@ const registerValidator = [
 const searchValidator = [query("q", "Text search is empty!").notEmpty()]
 
 module.exports = {
-    productValidator,
+    updateProductValidator,
+    createProductValidator,
     loginValidator,
     registerValidator,
     searchValidator,
