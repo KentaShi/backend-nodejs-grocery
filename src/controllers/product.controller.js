@@ -1,6 +1,4 @@
 "use strict"
-
-const { result } = require("lodash")
 const { SuccessResponse } = require("../core/success/success.response")
 const ProductServive = require("../services/product.service")
 

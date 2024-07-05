@@ -44,7 +44,7 @@ class AccessService {
             const user = {
                 userId: foundUser._id,
                 username: foundUser.username,
-                roles: foundUser.roles,
+                role: foundUser.role,
             }
 
             const { accessToken, refreshToken } = await this.#generateTokenPair(
@@ -64,7 +64,7 @@ class AccessService {
             return {
                 code: 200,
                 user: getInfoData({
-                    fields: ["username", "roles"],
+                    fields: ["avatar", "username", "role"],
                     object: foundUser,
                 }),
                 tokens: {
@@ -114,7 +114,7 @@ class AccessService {
             return {
                 code: 200,
                 user: getInfoData({
-                    fields: ["username", "roles"],
+                    fields: ["avatar", "username", "role"],
                     object: foundUser,
                 }),
                 tokens: {
@@ -169,7 +169,7 @@ class AccessService {
                 return {
                     code: 201,
                     user: getInfoData({
-                        fields: ["username", "roles"],
+                        fields: ["avatar", "username", "role"],
                         object: newUser,
                     }),
                 }
