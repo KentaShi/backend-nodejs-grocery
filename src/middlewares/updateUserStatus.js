@@ -2,12 +2,19 @@
 
 const { BadRequestError } = require("../core/errors/app.error")
 const asyncHandler = require("../helpers/asyncHandler")
+const UserStatusService = require("../services/userStatus.service")
+const userStatusService = new UserStatusService()
 
 const updateUserStatus = asyncHandler(async (req, res, next) => {
-    if (req.user) {
+    try {
+        if (req.user) {
+            await userStatusService.updateLastSeen(req.user.userId)
+        } else {
+            next(new BadRequestError("Invalid user"))
+        }
         next()
-    } else {
-        next(new BadRequestError("Invalid user"))
+    } catch (error) {
+        next(error)
     }
 })
 

@@ -6,12 +6,13 @@ const asyncHandler = require("../../helpers/asyncHandler")
 const { validate } = require("../../middlewares/validate")
 const { categoryValidator } = require("../../helpers/validator")
 const { authenticate } = require("../../middlewares/auth")
+const { updateUserStatus } = require("../../middlewares/updateUserStatus")
 const router = express.Router()
 
 const categoryController = new CategoryController()
 
 //authenticate
-router.use(authenticate)
+router.use(authenticate, updateUserStatus)
 
 //get all categories
 router.get("/all", asyncHandler(categoryController.findAllCategories))

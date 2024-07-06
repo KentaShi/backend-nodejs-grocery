@@ -12,10 +12,12 @@ const {
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 const { uploadDisk } = require("../../config/multer.config")
+const { updateUserStatus } = require("../../middlewares/updateUserStatus")
 
 const productController = new ProductController()
 
-router.use(authenticate)
+//authenticate
+router.use(authenticate, updateUserStatus)
 
 //search
 router.get(
