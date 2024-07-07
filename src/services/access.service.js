@@ -12,12 +12,15 @@ const {
     ConflictError,
     ForbiddenError,
 } = require("../core/errors/app.error")
+const UserStatusService = require("./userStatus.service")
 
 class AccessService {
+    #userStatusService
     constructor() {
         this.userRepository = new UserRepository()
         this.tokenService = new TokenService()
         this.jwtService = new JWTService()
+        this.#userStatusService = new UserStatusService()
     }
     #generateTokenPair = async (user) => {
         const accessToken = await this.jwtService.signAccessToken({ user })
@@ -39,6 +42,13 @@ class AccessService {
             const match = await bcrypt.compare(password, foundUser.password)
             if (!match) {
                 throw new BadRequestError()
+            }
+
+            const userStatus = await this.#userStatusService.findByUserId(
+                foundUser._id
+            )
+            if (userStatus.isBlocked) {
+                throw new ForbiddenError("You are blocked")
             }
 
             const user = {
@@ -64,7 +74,7 @@ class AccessService {
             return {
                 code: 200,
                 user: getInfoData({
-                    fields: ["avatar", "username", "role"],
+                    fields: ["_id", "avatar", "username", "role"],
                     object: foundUser,
                 }),
                 tokens: {
@@ -98,6 +108,13 @@ class AccessService {
             })
             if (!foundUser) {
                 throw new NotFoundError()
+            }
+            // handle blocked users
+            const userStatus = await this.#userStatusService.findByUserId(
+                foundUser._id
+            )
+            if (userStatus.isBlocked) {
+                throw new ForbiddenError("You are blocked")
             }
 
             //todo: handle login on other session
