@@ -8,7 +8,11 @@ class ProductController {
     }
     findAll = async (req, res, next) => {
         try {
-            const { code, ...results } = await this.productService.findAll()
+            const { page = 1, limit = 5 } = req.query
+            const { ...results } = await this.productService.findAll({
+                page,
+                limit,
+            })
             return new SuccessResponse({
                 metadata: results,
             }).send(res)

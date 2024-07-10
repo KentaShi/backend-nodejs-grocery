@@ -15,7 +15,7 @@ const categoryController = new CategoryController()
 router.use(authenticate, updateUserStatus)
 
 //get all categories
-router.get("/all", asyncHandler(categoryController.findAllCategories))
+router.get("/", asyncHandler(categoryController.findAllCategories))
 
 //get count of products by category
 router.get(

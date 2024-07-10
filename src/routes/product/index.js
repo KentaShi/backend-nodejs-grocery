@@ -28,7 +28,7 @@ router.get(
 )
 
 //fetch all products
-router.get("/all", asyncHandler(productController.findAll))
+router.get("", asyncHandler(productController.findAll))
 
 //fetch products by category
 router.get("/category/:cat", asyncHandler(productController.findByCategory))
