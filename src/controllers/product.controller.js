@@ -68,7 +68,7 @@ class ProductController {
         try {
             const { id } = req.params
             await this.productService.deleteById(id)
-
+            _io.emit("productDeleted", id)
             return new SuccessResponse({}).send(res)
         } catch (error) {
             next(error)
