@@ -26,7 +26,7 @@ router.post(
 )
 
 //get authenticated
-router.post("/getAuth", asyncHandler(accessController.getAuth))
+router.post("/auth", asyncHandler(accessController.getAuth))
 
 //refresh token
 router.post("/refresh-token", asyncHandler(accessController.refreshToken))
