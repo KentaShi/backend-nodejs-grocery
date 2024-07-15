@@ -2,8 +2,19 @@
 const productModel = require("../product.model")
 
 class ProductRepository {
-    findAll = async () => {
-        return await productModel.find().lean()
+    countDocuments = async () => {
+        return await productModel.countDocuments()
+    }
+    findAll = async ({ page, limit, sort }) => {
+        const skip = (page - 1) * limit
+        const sortBy = sort === "ctime" ? { _id: -1 } : { _id: 1 }
+
+        return await productModel
+            .find()
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .lean()
     }
     findById = async (product_id) => {
         return await productModel.findById(product_id).lean()

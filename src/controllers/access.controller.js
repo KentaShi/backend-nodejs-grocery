@@ -11,10 +11,13 @@ const {
 } = require("../core/errors/app.error")
 
 const AccessService = require("../services/access.service")
+const UserStatusService = require("../services/userStatus.service")
 
 class AccessController {
+    #userStatusService
     constructor() {
         this.accessservice = new AccessService()
+        this.#userStatusService = new UserStatusService()
     }
     login = async (req, res, next) => {
         try {
@@ -32,6 +35,7 @@ class AccessController {
         try {
             const { userId } = req.user
             await this.accessservice.logout(userId)
+            await this.#userStatusService.updateLastSeen(userId)
 
             return new SuccessResponse({}).send(res)
         } catch (error) {

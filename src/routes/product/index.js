@@ -12,10 +12,12 @@ const {
 const { validate } = require("../../middlewares/validate")
 const { authenticate } = require("../../middlewares/auth")
 const { uploadDisk } = require("../../config/multer.config")
+const { updateUserStatus } = require("../../middlewares/updateUserStatus")
 
 const productController = new ProductController()
 
-router.use(authenticate)
+//authenticate
+router.use(authenticate, updateUserStatus)
 
 //search
 router.get(
@@ -26,7 +28,7 @@ router.get(
 )
 
 //fetch all products
-router.get("/all", asyncHandler(productController.findAll))
+router.get("", asyncHandler(productController.findAll))
 
 //fetch products by category
 router.get("/category/:cat", asyncHandler(productController.findByCategory))

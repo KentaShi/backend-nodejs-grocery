@@ -12,12 +12,15 @@ const {
     ConflictError,
     ForbiddenError,
 } = require("../core/errors/app.error")
+const UserStatusService = require("./userStatus.service")
 
 class AccessService {
+    #userStatusService
     constructor() {
         this.userRepository = new UserRepository()
         this.tokenService = new TokenService()
         this.jwtService = new JWTService()
+        this.#userStatusService = new UserStatusService()
     }
     #generateTokenPair = async (user) => {
         const accessToken = await this.jwtService.signAccessToken({ user })
@@ -41,10 +44,17 @@ class AccessService {
                 throw new BadRequestError()
             }
 
+            const userStatus = await this.#userStatusService.findByUserId(
+                foundUser._id
+            )
+            if (userStatus.isBlocked) {
+                throw new ForbiddenError("You are blocked")
+            }
+
             const user = {
                 userId: foundUser._id,
                 username: foundUser.username,
-                roles: foundUser.roles,
+                role: foundUser.role,
             }
 
             const { accessToken, refreshToken } = await this.#generateTokenPair(
@@ -64,7 +74,7 @@ class AccessService {
             return {
                 code: 200,
                 user: getInfoData({
-                    fields: ["username", "roles"],
+                    fields: ["_id", "avatar", "username", "role"],
                     object: foundUser,
                 }),
                 tokens: {
@@ -99,6 +109,13 @@ class AccessService {
             if (!foundUser) {
                 throw new NotFoundError()
             }
+            // handle blocked users
+            const userStatus = await this.#userStatusService.findByUserId(
+                foundUser._id
+            )
+            if (userStatus.isBlocked) {
+                throw new ForbiddenError("You are blocked")
+            }
 
             //todo: handle login on other session
             const foundUserToken = await this.tokenService.findByUserId({
@@ -114,7 +131,7 @@ class AccessService {
             return {
                 code: 200,
                 user: getInfoData({
-                    fields: ["username", "roles"],
+                    fields: ["_id", "avatar", "username", "role"],
                     object: foundUser,
                 }),
                 tokens: {
@@ -169,7 +186,7 @@ class AccessService {
                 return {
                     code: 201,
                     user: getInfoData({
-                        fields: ["username", "roles"],
+                        fields: ["avatar", "username", "role"],
                         object: newUser,
                     }),
                 }

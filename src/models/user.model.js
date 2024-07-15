@@ -8,6 +8,16 @@ const COLLECTION_NAME = "Users"
 // Declare the Schema of the Mongo model
 var userSchema = new Schema(
     {
+        avatar: {
+            public_id: {
+                type: String,
+                default: "",
+            },
+            url: {
+                type: String,
+                default: "",
+            },
+        },
         username: {
             type: String,
             trim: true,
@@ -17,7 +27,7 @@ var userSchema = new Schema(
             type: String,
             required: true,
         },
-        roles: {
+        role: {
             type: String,
             enum: ["admin", "user", "guest"],
             default: "guest",

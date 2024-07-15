@@ -1,6 +1,4 @@
 "use strict"
-
-const { result } = require("lodash")
 const { SuccessResponse } = require("../core/success/success.response")
 const ProductServive = require("../services/product.service")
 
@@ -10,7 +8,11 @@ class ProductController {
     }
     findAll = async (req, res, next) => {
         try {
-            const { code, ...results } = await this.productService.findAll()
+            const { page = 1, limit = 5 } = req.query
+            const { ...results } = await this.productService.findAll({
+                page,
+                limit,
+            })
             return new SuccessResponse({
                 metadata: results,
             }).send(res)
@@ -66,7 +68,7 @@ class ProductController {
         try {
             const { id } = req.params
             await this.productService.deleteById(id)
-
+            _io.emit("productDeleted", id)
             return new SuccessResponse({}).send(res)
         } catch (error) {
             next(error)

@@ -63,12 +63,20 @@ class ProductSerive {
             throw error
         }
     }
-    findAll = async () => {
+    findAll = async ({ page, limit }) => {
         try {
-            const products = await this.productRepository.findAll()
+            const sort = "ctime"
+            const products = await this.productRepository.findAll({
+                page,
+                limit,
+                sort,
+            })
+            const count = await this.productRepository.countDocuments()
+            const totalPages = Math.ceil(count / limit)
             return {
-                code: 200,
                 products,
+                totalPages,
+                currentPage: page,
             }
         } catch (error) {
             throw error
