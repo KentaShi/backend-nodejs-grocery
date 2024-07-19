@@ -102,7 +102,6 @@ class ProductSerive {
                 cate_slug
             )
             return {
-                code: 200,
                 products,
             }
         } catch (error) {

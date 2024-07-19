@@ -24,8 +24,7 @@ class ProductController {
     findByCategory = async (req, res, next) => {
         try {
             const { cat } = req.params
-            const { code, ...results } =
-                await this.productService.findByCateSlug(cat)
+            const { ...results } = await this.productService.findByCateSlug(cat)
 
             return new SuccessResponse({
                 metadata: results,
