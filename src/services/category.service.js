@@ -48,14 +48,11 @@ class CategoryService {
             throw error
         }
     }
-    getCountOfProductsByCateSlug = async ({ cate_slug }) => {
+    countProductsByCateSlug = async (cate_slug) => {
         try {
-            const products = await this.productRepository.findByCateSlug(
-                cate_slug
-            )
+            const count = await this.productRepository.countByCate(cate_slug)
             return {
-                code: 200,
-                count: products.length,
+                count,
             }
         } catch (error) {
             throw error

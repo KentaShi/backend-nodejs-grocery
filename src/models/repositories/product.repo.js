@@ -2,6 +2,9 @@
 const productModel = require("../product.model")
 
 class ProductRepository {
+    countByCate = async (cate_slug) => {
+        return await productModel.countDocuments({ product_cate: cate_slug })
+    }
     countDocuments = async () => {
         return await productModel.countDocuments()
     }
