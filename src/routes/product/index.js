@@ -15,6 +15,11 @@ const { uploadDisk } = require("../../config/multer.config")
 const { updateUserStatus } = require("../../middlewares/updateUserStatus")
 
 const productController = new ProductController()
+//fetch all products
+router.get("", asyncHandler(productController.findAll))
+
+//fetch products for homepage
+router.get("/categories", asyncHandler(productController.findByCategries))
 
 //fetch products by category
 router.get("/category/:cat", asyncHandler(productController.findByCategory))
