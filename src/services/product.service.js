@@ -96,6 +96,17 @@ class ProductSerive {
             throw error
         }
     }
+    findByCategories = async () => {
+        const categories = await this.productRepository.getDistinctCategory()
+        const productsByCategory = await Promise.all(
+            categories.map(async (category) => {
+                const products =
+                    await this.productRepository.findByCateSlugLimit(category)
+                return { category, products }
+            })
+        )
+        return { productsByCategory }
+    }
     findByCateSlug = async (cate_slug) => {
         try {
             const products = await this.productRepository.findByCateSlug(

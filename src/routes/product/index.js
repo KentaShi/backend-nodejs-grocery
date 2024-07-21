@@ -15,9 +15,14 @@ const { uploadDisk } = require("../../config/multer.config")
 const { updateUserStatus } = require("../../middlewares/updateUserStatus")
 
 const productController = new ProductController()
+//fetch all products
+router.get("", asyncHandler(productController.findAll))
 
-//authenticate
-router.use(authenticate, updateUserStatus)
+//fetch products for homepage
+router.get("/categories", asyncHandler(productController.findByCategries))
+
+//fetch products by category
+router.get("/category/:cat", asyncHandler(productController.findByCategory))
 
 //search
 router.get(
@@ -27,11 +32,11 @@ router.get(
     asyncHandler(productController.search)
 )
 
+//authenticate
+router.use(authenticate, updateUserStatus)
+
 //fetch all products
 router.get("", asyncHandler(productController.findAll))
-
-//fetch products by category
-router.get("/category/:cat", asyncHandler(productController.findByCategory))
 
 //fetch product by id
 router.get("/:id", asyncHandler(productController.findById))

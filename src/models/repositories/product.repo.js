@@ -2,8 +2,14 @@
 const productModel = require("../product.model")
 
 class ProductRepository {
+    countByCate = async (cate_slug) => {
+        return await productModel.countDocuments({ product_cate: cate_slug })
+    }
     countDocuments = async () => {
         return await productModel.countDocuments()
+    }
+    getDistinctCategory = async () => {
+        return await productModel.distinct("product_cate")
     }
     findAll = async ({ page, limit, sort }) => {
         const skip = (page - 1) * limit
@@ -24,6 +30,12 @@ class ProductRepository {
     }
     findByCateSlug = async (cate_slug) => {
         return await productModel.find({ product_cate: cate_slug }).lean()
+    }
+    findByCateSlugLimit = async (cate_slug, limit = 4) => {
+        return await productModel
+            .find({ product_cate: cate_slug })
+            .limit(limit)
+            .lean()
     }
     isExistById = async (product_id) => {
         return await productModel.exists({ _id: product_id })

@@ -44,10 +44,8 @@ class CategoryController {
     getCountOfProductsByCate = async (req, res, next) => {
         try {
             const { cate_slug } = req.params
-            const { code, count } =
-                await this.categoryService.getCountOfProductsByCateSlug({
-                    cate_slug,
-                })
+            const { count } =
+                await this.categoryService.countProductsByCateSlug(cate_slug)
             return new SuccessResponse({
                 metadata: { count },
             }).send(res)
