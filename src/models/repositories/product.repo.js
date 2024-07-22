@@ -31,7 +31,7 @@ class ProductRepository {
     findByCateSlug = async (cate_slug) => {
         return await productModel.find({ product_cate: cate_slug }).lean()
     }
-    findByCateSlugLimit = async (cate_slug, limit = 4) => {
+    findByCateSlugLimit = async (cate_slug, limit = 6) => {
         return await productModel
             .find({ product_cate: cate_slug })
             .limit(limit)
