@@ -11,9 +11,6 @@ const router = express.Router()
 
 const categoryController = new CategoryController()
 
-//authenticate
-router.use(authenticate, updateUserStatus)
-
 //get all categories
 router.get("/", asyncHandler(categoryController.findAllCategories))
 
@@ -22,6 +19,9 @@ router.get(
     "/:cate_slug/count",
     asyncHandler(categoryController.getCountOfProductsByCate)
 )
+
+//authenticate
+router.use(authenticate, updateUserStatus)
 
 //add new category
 router.post(
